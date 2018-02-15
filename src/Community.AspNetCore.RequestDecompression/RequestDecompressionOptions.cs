@@ -11,6 +11,7 @@ namespace Community.AspNetCore.RequestDecompression
         /// <summary>Initializes a new instance of the <see cref="RequestDecompressionOptions" /> class.</summary>
         public RequestDecompressionOptions()
         {
+            SkipUnsupportedEncodings = true;
         }
 
         internal void Apply(RequestDecompressionOptions options)
@@ -20,7 +21,7 @@ namespace Community.AspNetCore.RequestDecompression
                 _providers[kvp.Key] = kvp.Value;
             }
 
-            RejectUnsupported = options.RejectUnsupported;
+            SkipUnsupportedEncodings = options.SkipUnsupportedEncodings;
         }
 
         /// <summary>Registers the decompression provider.</summary>
@@ -44,8 +45,8 @@ namespace Community.AspNetCore.RequestDecompression
             get => _providers;
         }
 
-        /// <summary>Gets or sets the value indicating whether the server must return HTTP error 415 if an unknown encoding is detected.</summary>
-        public bool RejectUnsupported
+        /// <summary>Gets or sets the value indicating whether the middleware should pass content with unsupported encoding to the next middleware in the request pipeline.</summary>
+        public bool SkipUnsupportedEncodings
         {
             get;
             set;

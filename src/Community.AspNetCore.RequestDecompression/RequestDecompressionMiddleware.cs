@@ -14,7 +14,7 @@ namespace Community.AspNetCore.RequestDecompression
     internal sealed class RequestDecompressionMiddleware : IMiddleware
     {
         private readonly IReadOnlyDictionary<string, IDecompressionProvider> _providers;
-        private readonly bool _rejectUnsupported;
+        private readonly bool _skipUnsupportedEncodings;
 
         public RequestDecompressionMiddleware(IServiceProvider services, IOptions<RequestDecompressionOptions> options)
         {
@@ -35,7 +35,7 @@ namespace Community.AspNetCore.RequestDecompression
             }
 
             _providers = providers;
-            _rejectUnsupported = options.Value.RejectUnsupported;
+            _skipUnsupportedEncodings = options.Value.SkipUnsupportedEncodings;
         }
 
         async Task IMiddleware.InvokeAsync(HttpContext context, RequestDelegate next)
@@ -45,7 +45,7 @@ namespace Community.AspNetCore.RequestDecompression
 
             if (encodingNames.Length > 0)
             {
-                if (_rejectUnsupported)
+                if (!_skipUnsupportedEncodings)
                 {
                     for (var i = encodingNames.Length - 1; i >= 0; i--)
                     {

@@ -292,7 +292,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
         {
             var options = new RequestDecompressionOptions()
             {
-                RejectUnsupported = true
+                SkipUnsupportedEncodings = false
             };
 
             var builder = new WebHostBuilder()

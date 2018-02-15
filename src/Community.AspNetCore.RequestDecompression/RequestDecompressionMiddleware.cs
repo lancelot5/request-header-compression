@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,7 @@ namespace Community.AspNetCore.RequestDecompression
     internal sealed class RequestDecompressionMiddleware : IMiddleware
     {
         private readonly IReadOnlyDictionary<string, IDecompressionProvider> _providers;
+        private readonly bool _rejectUnsupported;
 
         public RequestDecompressionMiddleware(IServiceProvider services, IOptions<RequestDecompressionOptions> options)
         {
@@ -33,6 +35,7 @@ namespace Community.AspNetCore.RequestDecompression
             }
 
             _providers = providers;
+            _rejectUnsupported = options.Value.RejectUnsupported;
         }
 
         async Task IMiddleware.InvokeAsync(HttpContext context, RequestDelegate next)
@@ -42,20 +45,36 @@ namespace Community.AspNetCore.RequestDecompression
 
             if (encodingNames.Length > 0)
             {
+                if (_rejectUnsupported)
+                {
+                    for (var i = encodingNames.Length - 1; i >= 0; i--)
+                    {
+                        if (string.Compare(encodingNames[i], "identity", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            continue;
+                        }
+                        if (!_providers.TryGetValue(encodingNames[i], out var provider))
+                        {
+                            context.Response.StatusCode = (int)HttpStatusCode.UnsupportedMediaType;
+
+                            return;
+                        }
+                    }
+                }
+
                 var encodedStream = context.Request.Body;
                 var encodingsLeft = encodingNames.Length;
 
                 for (var i = encodingNames.Length - 1; i >= 0; i--)
                 {
+                    if (string.Compare(encodingNames[i], "identity", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        encodingsLeft--;
+
+                        continue;
+                    }
                     if (!_providers.TryGetValue(encodingNames[i], out var provider))
                     {
-                        if (string.Compare(encodingNames[i], "identity", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            encodingsLeft--;
-
-                            continue;
-                        }
-
                         break;
                     }
 

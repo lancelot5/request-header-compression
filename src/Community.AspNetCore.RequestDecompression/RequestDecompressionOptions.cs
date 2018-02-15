@@ -19,6 +19,8 @@ namespace Community.AspNetCore.RequestDecompression
             {
                 _providers[kvp.Key] = kvp.Value;
             }
+
+            RejectUnsupported = options.RejectUnsupported;
         }
 
         /// <summary>Registers the decompression provider.</summary>
@@ -40,6 +42,13 @@ namespace Community.AspNetCore.RequestDecompression
         public IReadOnlyDictionary<string, Type> Providers
         {
             get => _providers;
+        }
+
+        /// <summary>Gets or sets the value indicating whether the server must return HTTP error 415 if an unknown encoding is detected.</summary>
+        public bool RejectUnsupported
+        {
+            get;
+            set;
         }
     }
 }

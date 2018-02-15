@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,6 +49,14 @@ namespace Community.AspNetCore.RequestDecompression.Tests
         {
             Assert.True(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
             Assert.Equal(new StringValues(new[] { "identity", "unknown" }), request.Headers[HeaderNames.ContentEncoding]);
+
+            return Task.CompletedTask;
+        }
+
+        private static Task TestActionForUndecodedContent(HttpRequest request)
+        {
+            Assert.True(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
+            Assert.Equal(new StringValues("unknown"), request.Headers[HeaderNames.ContentEncoding]);
 
             return Task.CompletedTask;
         }
@@ -245,6 +254,69 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                     requestContent.Headers.ContentEncoding.Add("gzip");
 
                     await client.PostAsync(server.BaseAddress, requestContent).ConfigureAwait(false);
+                }
+            }
+        }
+
+        [Fact]
+        public async void HandlUnknownEncoding()
+        {
+            var options = new RequestDecompressionOptions();
+
+            var builder = new WebHostBuilder()
+                .ConfigureLogging(lb => lb
+                    .SetMinimumLevel(LogLevel.Trace)
+                    .AddXunit(_output))
+                .ConfigureServices(sc => sc
+                    .AddRequestDecompression(options)
+                    .AddRequestTest(TestActionForUndecodedContent))
+                .Configure(ab => ab
+                    .UseResponseCompression()
+                    .UseRequestTest());
+
+            using (var server = new TestServer(builder))
+            {
+                using (var client = server.CreateClient())
+                {
+                    var requestContent = new ByteArrayContent(Encoding.UTF8.GetBytes("0123456789"));
+
+                    requestContent.Headers.ContentEncoding.Add("unknown");
+
+                    await client.PostAsync(server.BaseAddress, requestContent).ConfigureAwait(false);
+                }
+            }
+        }
+
+        [Fact]
+        public async void HandlUnknownEncodingWithReject()
+        {
+            var options = new RequestDecompressionOptions()
+            {
+                RejectUnsupported = true
+            };
+
+            var builder = new WebHostBuilder()
+                .ConfigureLogging(lb => lb
+                    .SetMinimumLevel(LogLevel.Trace)
+                    .AddXunit(_output))
+                .ConfigureServices(sc => sc
+                    .AddRequestDecompression(options)
+                    .AddRequestTest(TestActionForUndecodedContent))
+                .Configure(ab => ab
+                    .UseResponseCompression()
+                    .UseRequestTest());
+
+            using (var server = new TestServer(builder))
+            {
+                using (var client = server.CreateClient())
+                {
+                    var requestContent = new ByteArrayContent(Encoding.UTF8.GetBytes("0123456789"));
+
+                    requestContent.Headers.ContentEncoding.Add("unknown");
+
+                    var response = await client.PostAsync(server.BaseAddress, requestContent).ConfigureAwait(false);
+
+                    Assert.Equal(HttpStatusCode.UnsupportedMediaType, response.StatusCode);
                 }
             }
         }

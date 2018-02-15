@@ -53,7 +53,7 @@ namespace Community.AspNetCore.RequestDecompression
                         {
                             continue;
                         }
-                        if (!_providers.TryGetValue(encodingNames[i], out var provider))
+                        if (!_providers.ContainsKey(encodingNames[i]))
                         {
                             context.Response.StatusCode = (int)HttpStatusCode.UnsupportedMediaType;
 
@@ -82,7 +82,9 @@ namespace Community.AspNetCore.RequestDecompression
 
                     using (var decompressionStream = provider.CreateStream(encodedStream))
                     {
-                        await decompressionStream.CopyToAsync(decodedStream).ConfigureAwait(false);
+                        // 81920 is the default buffer size
+
+                        await decompressionStream.CopyToAsync(decodedStream, 81920, context.RequestAborted).ConfigureAwait(false);
 
                         decompressionStream.Close();
                     }

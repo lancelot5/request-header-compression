@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Version>1.0.0</Version>
-    <Description><![CDATA[ASP.NET Core 2.0 middleware for transparent HTTP request decompression]]></Description>
+    <Description><![CDATA[Transparent HTTP request decompression middleware for ASP.NET Core 2.0]]></Description>
     <Authors><![CDATA[Alexander Kozlenko]]></Authors>
     <Copyright><![CDATA[© Alexander Kozlenko. All rights reserved.]]></Copyright>
     <PackageTags><![CDATA[aspnetcore decompression gzip deflate]]></PackageTags>

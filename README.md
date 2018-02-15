@@ -1,6 +1,6 @@
 ## Community.AspNetCore.RequestDecompression
 
-ASP.NET Core 2.0 middleware for transparent HTTP request decompression, which serves as a complementary component to the [Microsoft.AspNetCore.ResponseCompression](https://www.nuget.org/packages/Microsoft.AspNetCore.ResponseCompression/).
+Transparent HTTP request decompression middleware for ASP.NET Core 2.0, which serves as a complementary component to the [Microsoft.AspNetCore.ResponseCompression](https://www.nuget.org/packages/Microsoft.AspNetCore.ResponseCompression/).
 
 [![NuGet package](https://img.shields.io/nuget/v/Community.AspNetCore.RequestDecompression.svg?style=flat-square)](https://www.nuget.org/packages/Community.AspNetCore.RequestDecompression)
 

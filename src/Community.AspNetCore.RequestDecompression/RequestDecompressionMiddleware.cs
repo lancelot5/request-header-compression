@@ -11,7 +11,7 @@ using Microsoft.Net.Http.Headers;
 
 namespace Community.AspNetCore.RequestDecompression
 {
-    internal sealed class RequestDecompressionMiddleware : IMiddleware
+    internal sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
     {
         private readonly IReadOnlyDictionary<string, IDecompressionProvider> _providers;
         private readonly bool _skipUnsupportedEncodings;
@@ -123,6 +123,14 @@ namespace Community.AspNetCore.RequestDecompression
             await next.Invoke(context).ConfigureAwait(false);
 
             decodedStream?.Dispose();
+        }
+
+        void IDisposable.Dispose()
+        {
+            foreach (var provider in _providers.Values)
+            {
+                (provider as IDisposable)?.Dispose();
+            }
         }
     }
 }

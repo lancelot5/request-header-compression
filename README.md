@@ -11,6 +11,7 @@ Transparent HTTP request decompression middleware for ASP.NET Core 2.0, which se
 - The middleware provides an ability to use a custom provider for the particular encoding.
 - The middleware supports `identity` encoding by default.
 - The middleware can optionally return HTTP status code `415` if an unsupported encoding is detected.
+- The middleware supports automatic disposing of providers which implements the `IDisposable` interface.
 
 ### Examples
 

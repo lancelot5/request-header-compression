@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Community.AspNetCore.RequestDecompression.Benchmarks.Framework;
@@ -23,20 +22,25 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks.Suites
 
         static RequestDecompressionMiddlewareBenchmarks()
         {
-            var stringBytes = Encoding.UTF8.GetBytes("01234567890");
+            var decodedContent = new byte[byte.MaxValue];
+
+            for (var i = 0; i < decodedContent.Length; i++)
+            {
+                decodedContent[i] = (byte)i;
+            }
 
             var contents = new Dictionary<string, byte[]>(StringComparer.Ordinal)
             {
-                [""] = stringBytes,
-                ["identity"] = stringBytes,
-                ["unknown"] = stringBytes
+                [""] = decodedContent,
+                ["identity"] = decodedContent,
+                ["unknown"] = decodedContent
             };
 
             using (var outputStream = new MemoryStream())
             {
                 using (var compressionStream = new DeflateStream(outputStream, CompressionLevel.Optimal))
                 {
-                    compressionStream.Write(stringBytes, 0, stringBytes.Length);
+                    compressionStream.Write(decodedContent, 0, decodedContent.Length);
                     compressionStream.Close();
                 }
 
@@ -46,7 +50,7 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks.Suites
             {
                 using (var compressionStream = new GZipStream(outputStream, CompressionLevel.Optimal))
                 {
-                    compressionStream.Write(stringBytes, 0, stringBytes.Length);
+                    compressionStream.Write(decodedContent, 0, decodedContent.Length);
                     compressionStream.Close();
                 }
 

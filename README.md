@@ -6,12 +6,12 @@ Transparent HTTP request decompression middleware for ASP.NET Core 2.0, which se
 
 ### Features
 
-- The middleware includes decompression providers for `gzip` and `DEFLATE` algorithms.
-- The middleware supports decompressing content with multiple encodings.
+- The middleware includes decompression providers for the `gzip` and `DEFLATE` algorithms.
+- The middleware supports decompressing of content with multiple encodings.
 - The middleware provides an ability to use a custom provider for the particular encoding.
-- The middleware supports `identity` encoding by default.
-- The middleware can optionally return HTTP status code `415` if an unsupported encoding is detected.
-- The middleware supports automatic disposing of providers which implements the `IDisposable` interface.
+- The middleware supports responding with HTTP status code `415` if an unsupported encoding is found.
+- The middleware supports automatic disposing of providers which implement the `IDisposable` interface.
+- The middleware supports the `identity` encoding by default.
 
 ### Examples
 
@@ -20,6 +20,8 @@ var options = new RequestDecompressionOptions();
 
 options.Register<DeflateDecompressionProvider>("deflate");
 options.Register<GzipDecompressionProvider>("gzip");
+options.Register<BrotliDecompressionProvider>("br");
+options.SkipUnsupportedEncodings = false;
 ```
 \+
 ```cs

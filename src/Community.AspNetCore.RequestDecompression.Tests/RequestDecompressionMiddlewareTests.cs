@@ -3,8 +3,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using Community.AspNetCore.RequestDecompression.Tests.Middleware;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,38 +25,33 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             _output = output;
         }
 
-        private static async Task TestActionForDecodedContent(HttpRequest request)
+        private static void TestActionForDecodedContent(HttpRequest request)
         {
-            var expected = "0123456789";
-
             Assert.False(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
             Assert.True(request.Headers.ContainsKey(HeaderNames.ContentLength));
-            Assert.Equal(expected.Length.ToString(CultureInfo.InvariantCulture), request.Headers[HeaderNames.ContentLength]);
 
-            var actual = default(string);
+            var content = default(byte[]);
 
-            using (var reader = new StreamReader(request.Body, Encoding.UTF8))
+            using (var buffer = new MemoryStream())
             {
-                actual = await reader.ReadToEndAsync();
+                request.Body.CopyTo(buffer);
+                content = buffer.ToArray();
             }
 
-            Assert.Equal(expected, actual);
+            Assert.Equal(content.Length.ToString(CultureInfo.InvariantCulture), request.Headers[HeaderNames.ContentLength]);
+            Assert.Equal(CreateContentSample(), content);
         }
 
-        private static Task TestActionForPartiallyDecodedContent(HttpRequest request)
+        private void TestActionForPartiallyDecodedContent(HttpRequest request)
         {
             Assert.True(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
             Assert.Equal(new StringValues(new[] { "identity", "unknown" }), request.Headers[HeaderNames.ContentEncoding]);
-
-            return Task.CompletedTask;
         }
 
-        private static Task TestActionForUndecodedContent(HttpRequest request)
+        private void TestActionForUndecodedContent(HttpRequest request)
         {
             Assert.True(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
             Assert.Equal(new StringValues("unknown"), request.Headers[HeaderNames.ContentEncoding]);
-
-            return Task.CompletedTask;
         }
 
         [Fact]
@@ -84,7 +77,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             {
                 using (var client = server.CreateClient())
                 {
-                    var contentBytes = Encoding.UTF8.GetBytes("0123456789");
+                    var contentBytes = CreateContentSample();
                     var requestContent = new ByteArrayContent(contentBytes);
 
                     requestContent.Headers.ContentLength = contentBytes.Length;
@@ -117,7 +110,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             {
                 using (var client = server.CreateClient())
                 {
-                    var contentBytes = Encoding.UTF8.GetBytes("0123456789");
+                    var contentBytes = CreateContentSample();
                     var requestContent = new ByteArrayContent(contentBytes);
 
                     requestContent.Headers.ContentEncoding.Add("identity");
@@ -149,7 +142,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             {
                 using (var client = server.CreateClient())
                 {
-                    var requestContent = new ByteArrayContent(CompressWithDeflate(Encoding.UTF8.GetBytes("0123456789")));
+                    var requestContent = new ByteArrayContent(CompressWithDeflate(CreateContentSample()));
 
                     requestContent.Headers.ContentEncoding.Add("deflate");
 
@@ -180,7 +173,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             {
                 using (var client = server.CreateClient())
                 {
-                    var requestContent = new ByteArrayContent(CompressWithGzip(Encoding.UTF8.GetBytes("0123456789")));
+                    var requestContent = new ByteArrayContent(CompressWithGzip(CreateContentSample()));
 
                     requestContent.Headers.ContentEncoding.Add("gzip");
 
@@ -212,7 +205,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             {
                 using (var client = server.CreateClient())
                 {
-                    var requestContent = new ByteArrayContent(CompressWithGzip(CompressWithDeflate(Encoding.UTF8.GetBytes("0123456789"))));
+                    var requestContent = new ByteArrayContent(CompressWithGzip(CompressWithDeflate(CreateContentSample())));
 
                     requestContent.Headers.ContentEncoding.Add("identity");
                     requestContent.Headers.ContentEncoding.Add("deflate");
@@ -246,7 +239,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             {
                 using (var client = server.CreateClient())
                 {
-                    var requestContent = new ByteArrayContent(CompressWithGzip(CompressWithDeflate(Encoding.UTF8.GetBytes("0123456789"))));
+                    var requestContent = new ByteArrayContent(CompressWithGzip(CompressWithDeflate(CreateContentSample())));
 
                     requestContent.Headers.ContentEncoding.Add("identity");
                     requestContent.Headers.ContentEncoding.Add("unknown");
@@ -278,7 +271,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             {
                 using (var client = server.CreateClient())
                 {
-                    var requestContent = new ByteArrayContent(Encoding.UTF8.GetBytes("0123456789"));
+                    var requestContent = new ByteArrayContent(CreateContentSample());
 
                     requestContent.Headers.ContentEncoding.Add("unknown");
 
@@ -310,7 +303,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             {
                 using (var client = server.CreateClient())
                 {
-                    var requestContent = new ByteArrayContent(Encoding.UTF8.GetBytes("0123456789"));
+                    var requestContent = new ByteArrayContent(CreateContentSample());
 
                     requestContent.Headers.ContentEncoding.Add("unknown");
 
@@ -347,6 +340,18 @@ namespace Community.AspNetCore.RequestDecompression.Tests
 
                 return outputStream.ToArray();
             }
+        }
+
+        private static byte[] CreateContentSample()
+        {
+            var decodedContent = new byte[byte.MaxValue];
+
+            for (var i = 0; i < decodedContent.Length; i++)
+            {
+                decodedContent[i] = (byte)i;
+            }
+
+            return decodedContent;
         }
     }
 }

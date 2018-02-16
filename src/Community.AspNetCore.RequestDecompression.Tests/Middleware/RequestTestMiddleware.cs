@@ -7,7 +7,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests.Middleware
 {
     internal sealed class RequestTestMiddleware : IMiddleware
     {
-        private readonly Func<HttpRequest, Task> _action;
+        private readonly Action<HttpRequest> _action;
 
         public RequestTestMiddleware(IOptions<RequestTestOptions> options)
         {
@@ -17,16 +17,13 @@ namespace Community.AspNetCore.RequestDecompression.Tests.Middleware
             }
 
             _action = options.Value.Action;
-
-            if (options.Value.Action == null)
-            {
-                throw new InvalidOperationException("The action is not specified");
-            }
         }
 
         Task IMiddleware.InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            return _action.Invoke(context.Request);
+            _action?.Invoke(context.Request);
+
+            return Task.CompletedTask;
         }
     }
 }

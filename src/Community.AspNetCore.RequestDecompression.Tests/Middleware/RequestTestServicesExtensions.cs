@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,7 +6,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests.Middleware
 {
     internal static class RequestTestServicesExtensions
     {
-        public static IServiceCollection AddRequestTest(this IServiceCollection services, Func<HttpRequest, Task> action)
+        public static IServiceCollection AddRequestTest(this IServiceCollection services, Action<HttpRequest> action)
         {
             if (services == null)
             {

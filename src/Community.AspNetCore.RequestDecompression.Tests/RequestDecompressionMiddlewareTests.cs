@@ -39,7 +39,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
 
             using (var reader = new StreamReader(request.Body, Encoding.UTF8))
             {
-                actual = await reader.ReadToEndAsync().ConfigureAwait(false);
+                actual = await reader.ReadToEndAsync();
             }
 
             Assert.Equal(expected, actual);
@@ -89,7 +89,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
 
                     requestContent.Headers.ContentLength = contentBytes.Length;
 
-                    await client.PostAsync(server.BaseAddress, requestContent).ConfigureAwait(false);
+                    await client.PostAsync(server.BaseAddress, requestContent);
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
 
                     requestContent.Headers.ContentEncoding.Add("identity");
 
-                    await client.PostAsync(server.BaseAddress, requestContent).ConfigureAwait(false);
+                    await client.PostAsync(server.BaseAddress, requestContent);
                 }
             }
         }
@@ -153,7 +153,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
 
                     requestContent.Headers.ContentEncoding.Add("deflate");
 
-                    await client.PostAsync(server.BaseAddress, requestContent).ConfigureAwait(false);
+                    await client.PostAsync(server.BaseAddress, requestContent);
                 }
             }
         }
@@ -184,7 +184,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
 
                     requestContent.Headers.ContentEncoding.Add("gzip");
 
-                    await client.PostAsync(server.BaseAddress, requestContent).ConfigureAwait(false);
+                    await client.PostAsync(server.BaseAddress, requestContent);
                 }
             }
         }
@@ -218,7 +218,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                     requestContent.Headers.ContentEncoding.Add("deflate");
                     requestContent.Headers.ContentEncoding.Add("gzip");
 
-                    await client.PostAsync(server.BaseAddress, requestContent).ConfigureAwait(false);
+                    await client.PostAsync(server.BaseAddress, requestContent);
                 }
             }
         }
@@ -253,7 +253,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                     requestContent.Headers.ContentEncoding.Add("deflate");
                     requestContent.Headers.ContentEncoding.Add("gzip");
 
-                    await client.PostAsync(server.BaseAddress, requestContent).ConfigureAwait(false);
+                    await client.PostAsync(server.BaseAddress, requestContent);
                 }
             }
         }
@@ -282,7 +282,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
 
                     requestContent.Headers.ContentEncoding.Add("unknown");
 
-                    await client.PostAsync(server.BaseAddress, requestContent).ConfigureAwait(false);
+                    await client.PostAsync(server.BaseAddress, requestContent);
                 }
             }
         }
@@ -314,7 +314,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
 
                     requestContent.Headers.ContentEncoding.Add("unknown");
 
-                    var response = await client.PostAsync(server.BaseAddress, requestContent).ConfigureAwait(false);
+                    var response = await client.PostAsync(server.BaseAddress, requestContent);
 
                     Assert.Equal(HttpStatusCode.UnsupportedMediaType, response.StatusCode);
                 }

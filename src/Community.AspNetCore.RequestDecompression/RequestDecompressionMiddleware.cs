@@ -84,7 +84,7 @@ namespace Community.AspNetCore.RequestDecompression
                     {
                         // 81920 is the default buffer size
 
-                        await decompressionStream.CopyToAsync(decodedStream, 81920, context.RequestAborted).ConfigureAwait(false);
+                        await decompressionStream.CopyToAsync(decodedStream, 81920, context.RequestAborted);
                     }
 
                     decodedStream.Position = 0L;
@@ -118,7 +118,7 @@ namespace Community.AspNetCore.RequestDecompression
                 }
             }
 
-            await next.Invoke(context).ConfigureAwait(false);
+            await next.Invoke(context);
 
             decodedStream?.Dispose();
         }

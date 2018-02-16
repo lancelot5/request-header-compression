@@ -16,6 +16,16 @@ Transparent HTTP request decompression middleware for ASP.NET Core 2.0, which se
 ### Examples
 
 ```cs
+public class BrotliDecompressionProvider : IDecompressionProvider
+{
+    public Stream CreateStream(Stream outputStream)
+    {
+        return new BrotliStream(outputStream, CompressionMode.Decompress);
+    }
+}
+```
+\+
+```cs
 var options = new RequestDecompressionOptions();
 
 options.Register<DeflateDecompressionProvider>("deflate");

@@ -13,6 +13,11 @@ Transparent HTTP request decompression middleware for ASP.NET Core 2.0, which se
 - The middleware supports automatic disposing of providers which implement the `IDisposable` interface.
 - The middleware supports the `identity` encoding by default.
 
+### Specifics
+
+- The middleware removes the `Content-Encoding` header if all encodings were handled, or removes handled encodings from the header.
+- The middleware adds the `Content-Length` header if all encodings were handled.
+
 ### Examples
 
 ```cs

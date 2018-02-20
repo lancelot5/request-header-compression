@@ -5,10 +5,12 @@ using Microsoft.Extensions.Options;
 
 namespace Community.AspNetCore.RequestDecompression.Tests.Middleware
 {
+    /// <summary>Represents request testing middleware.</summary>
     internal sealed class RequestTestMiddleware : IMiddleware
     {
         private readonly Action<HttpRequest> _action;
 
+        /// <summary>Initializes a new instance of the <see cref="RequestTestMiddleware" /> class.</summary>
         public RequestTestMiddleware(IOptions<RequestTestOptions> options)
         {
             if (options == null)

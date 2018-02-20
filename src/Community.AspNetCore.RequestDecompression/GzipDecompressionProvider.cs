@@ -3,9 +3,14 @@ using System.IO.Compression;
 
 namespace Community.AspNetCore.RequestDecompression
 {
-    /// <summary>Represents GZIP decompression provider.</summary>
+    /// <summary>Represents gzip decompression provider.</summary>
     public sealed class GzipDecompressionProvider : IDecompressionProvider
     {
+        /// <summary>Initializes a new instance of the <see cref="GzipDecompressionProvider" /> class.</summary>
+        public GzipDecompressionProvider()
+        {
+        }
+
         Stream IDecompressionProvider.CreateStream(Stream outputStream)
         {
             return new GZipStream(outputStream, CompressionMode.Decompress);

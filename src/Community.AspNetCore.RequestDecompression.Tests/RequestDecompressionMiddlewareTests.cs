@@ -45,13 +45,13 @@ namespace Community.AspNetCore.RequestDecompression.Tests
         private void TestActionForPartiallyDecodedContent(HttpRequest request)
         {
             Assert.True(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
-            Assert.Equal(new StringValues(new[] { "identity", "unknown" }), request.Headers[HeaderNames.ContentEncoding]);
+            Assert.Equal((StringValues)new[] { "identity", "unknown" }, request.Headers[HeaderNames.ContentEncoding]);
         }
 
         private void TestActionForUndecodedContent(HttpRequest request)
         {
             Assert.True(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
-            Assert.Equal(new StringValues("unknown"), request.Headers[HeaderNames.ContentEncoding]);
+            Assert.Equal((StringValues)"unknown", request.Headers[HeaderNames.ContentEncoding]);
         }
 
         [Fact]
@@ -321,7 +321,6 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                 using (var compressionStream = new DeflateStream(outputStream, CompressionLevel.Optimal))
                 {
                     compressionStream.Write(content, 0, content.Length);
-                    compressionStream.Close();
                 }
 
                 return outputStream.ToArray();
@@ -335,7 +334,6 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                 using (var compressionStream = new GZipStream(outputStream, CompressionLevel.Optimal))
                 {
                     compressionStream.Write(content, 0, content.Length);
-                    compressionStream.Close();
                 }
 
                 return outputStream.ToArray();

@@ -41,7 +41,6 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks.Suites
                 using (var compressionStream = new DeflateStream(outputStream, CompressionLevel.Optimal))
                 {
                     compressionStream.Write(decodedContent, 0, decodedContent.Length);
-                    compressionStream.Close();
                 }
 
                 contents["deflate"] = outputStream.ToArray();
@@ -51,7 +50,6 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks.Suites
                 using (var compressionStream = new GZipStream(outputStream, CompressionLevel.Optimal))
                 {
                     compressionStream.Write(decodedContent, 0, decodedContent.Length);
-                    compressionStream.Close();
                 }
 
                 contents["gzip"] = outputStream.ToArray();

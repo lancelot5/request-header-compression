@@ -45,25 +45,8 @@ namespace Community.AspNetCore.RequestDecompression
 
             if (encodingNames.Length > 0)
             {
-                if (!_skipUnsupportedEncodings)
-                {
-                    for (var i = encodingNames.Length - 1; i >= 0; i--)
-                    {
-                        if (string.Compare(encodingNames[i], "identity", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            continue;
-                        }
-                        if (!_providers.ContainsKey(encodingNames[i]))
-                        {
-                            context.Response.StatusCode = (int)HttpStatusCode.UnsupportedMediaType;
-
-                            return;
-                        }
-                    }
-                }
-
-                var encodedStream = context.Request.Body;
                 var encodingsLeft = encodingNames.Length;
+                var decodingStream = context.Request.Body;
 
                 for (var i = encodingNames.Length - 1; i >= 0; i--)
                 {
@@ -75,34 +58,36 @@ namespace Community.AspNetCore.RequestDecompression
                     }
                     if (!_providers.TryGetValue(encodingNames[i], out var provider))
                     {
+                        if (!_skipUnsupportedEncodings)
+                        {
+                            context.Response.StatusCode = (int)HttpStatusCode.UnsupportedMediaType;
+
+                            return;
+                        }
+
                         break;
                     }
 
-                    decodedStream = new MemoryStream();
-
-                    using (var decompressionStream = provider.CreateStream(encodedStream))
-                    {
-                        // 81920 is the default buffer size
-
-                        await decompressionStream.CopyToAsync(decodedStream, 81920, context.RequestAborted);
-                    }
-
-                    decodedStream.Position = 0L;
-                    encodedStream.Dispose();
-                    encodedStream = decodedStream;
+                    decodingStream = provider.CreateStream(decodingStream);
                     encodingsLeft--;
                 }
 
-                if (decodedStream != null)
+                if (decodingStream != context.Request.Body)
                 {
+                    decodedStream = new MemoryStream();
+
+                    // 81920 is the default buffer size
+
+                    await decodingStream.CopyToAsync(decodedStream, 81920, context.RequestAborted);
+
+                    decodingStream.Dispose();
+                    decodedStream.Position = 0L;
                     context.Request.Body = decodedStream;
                 }
 
                 if (encodingsLeft == 0)
                 {
-                    var contentStream = decodedStream ?? context.Request.Body;
-
-                    context.Request.Headers[HeaderNames.ContentLength] = contentStream.Length.ToString(CultureInfo.InvariantCulture);
+                    context.Request.Headers[HeaderNames.ContentLength] = context.Request.Body.Length.ToString(CultureInfo.InvariantCulture);
                     context.Request.Headers.Remove(HeaderNames.ContentEncoding);
                 }
                 else if (encodingsLeft < encodingNames.Length)

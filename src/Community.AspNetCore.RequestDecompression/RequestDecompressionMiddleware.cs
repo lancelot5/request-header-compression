@@ -41,10 +41,10 @@ namespace Community.AspNetCore.RequestDecompression
         async Task IMiddleware.InvokeAsync(HttpContext context, RequestDelegate next)
         {
             var decodedStream = default(Stream);
-            var encodingNames = (string[])context.Request.Headers[HeaderNames.ContentEncoding];
 
-            if (encodingNames.Length > 0)
+            if (context.Request.Headers.TryGetValue(HeaderNames.ContentEncoding, out var contentEncodingValue) && (contentEncodingValue.Count > 0))
             {
+                var encodingNames = (string[])contentEncodingValue;
                 var encodingsLeft = encodingNames.Length;
                 var decodingStream = context.Request.Body;
 
@@ -76,11 +76,11 @@ namespace Community.AspNetCore.RequestDecompression
                 {
                     decodedStream = new MemoryStream();
 
-                    // 81920 is the default buffer size
+                    using (decodingStream)
+                    {
+                        await decodingStream.CopyToAsync(decodedStream, 81920, context.RequestAborted); // 81920 is the default buffer size
+                    }
 
-                    await decodingStream.CopyToAsync(decodedStream, 81920, context.RequestAborted);
-
-                    decodingStream.Dispose();
                     decodedStream.Position = 0L;
                     context.Request.Body = decodedStream;
                 }

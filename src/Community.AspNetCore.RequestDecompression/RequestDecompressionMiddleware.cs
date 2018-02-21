@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -87,7 +86,7 @@ namespace Community.AspNetCore.RequestDecompression
 
                 if (encodingsLeft == 0)
                 {
-                    context.Request.Headers[HeaderNames.ContentLength] = context.Request.Body.Length.ToString(CultureInfo.InvariantCulture);
+                    context.Request.ContentLength = context.Request.Body.Length;
                     context.Request.Headers.Remove(HeaderNames.ContentEncoding);
                 }
                 else if (encodingsLeft < encodingNames.Length)

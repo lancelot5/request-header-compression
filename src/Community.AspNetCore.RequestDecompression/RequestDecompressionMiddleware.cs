@@ -33,6 +33,8 @@ namespace Community.AspNetCore.RequestDecompression
                 providers[kvp.Key] = (IDecompressionProvider)ActivatorUtilities.CreateInstance(services, kvp.Value);
             }
 
+            providers["identity"] = null;
+
             _providers = providers;
             _skipUnsupportedEncodings = options.Value.SkipUnsupportedEncodings;
         }
@@ -49,12 +51,6 @@ namespace Community.AspNetCore.RequestDecompression
 
                 for (var i = encodingNames.Length - 1; i >= 0; i--)
                 {
-                    if (string.Compare(encodingNames[i], "identity", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        encodingsLeft--;
-
-                        continue;
-                    }
                     if (!_providers.TryGetValue(encodingNames[i], out var provider))
                     {
                         if (!_skipUnsupportedEncodings)
@@ -66,8 +62,11 @@ namespace Community.AspNetCore.RequestDecompression
 
                         break;
                     }
+                    if (provider != null)
+                    {
+                        decodingStream = provider.CreateStream(decodingStream);
+                    }
 
-                    decodingStream = provider.CreateStream(decodingStream);
                     encodingsLeft--;
                 }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Community.AspNetCore.RequestDecompression.Resources;
 
 namespace Community.AspNetCore.RequestDecompression
 {
@@ -27,6 +28,7 @@ namespace Community.AspNetCore.RequestDecompression
         /// <summary>Registers the decompression provider.</summary>
         /// <typeparam name="T">The type of decompression provider.</typeparam>
         /// <param name="encodingName">The encoding name (case insensitive).</param>
+        /// <exception cref="ArgumentException"><paramref name="encodingName" /> is the "identity" value.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="encodingName" /> is <see langword="null" />.</exception>
         public void Register<T>(string encodingName)
             where T : class, IDecompressionProvider
@@ -34,6 +36,10 @@ namespace Community.AspNetCore.RequestDecompression
             if (encodingName == null)
             {
                 throw new ArgumentNullException(nameof(encodingName));
+            }
+            if (string.Compare(encodingName, "identity", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                throw new ArgumentException(Strings.GetString("encoding.identity"), nameof(encodingName));
             }
 
             _providers[encodingName] = typeof(T);

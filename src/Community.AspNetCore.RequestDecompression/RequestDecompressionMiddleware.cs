@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using Community.AspNetCore.RequestDecompression.Resources;
 using Microsoft.AspNetCore.Http;
@@ -69,7 +68,7 @@ namespace Community.AspNetCore.RequestDecompression
                     {
                         if (!_skipUnsupportedEncodings)
                         {
-                            context.Response.StatusCode = (int)HttpStatusCode.UnsupportedMediaType;
+                            context.Response.StatusCode = StatusCodes.Status415UnsupportedMediaType;
 
                             return;
                         }

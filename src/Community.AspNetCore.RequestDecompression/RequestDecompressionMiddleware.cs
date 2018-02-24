@@ -43,13 +43,12 @@ namespace Community.AspNetCore.RequestDecompression
         {
             var decodedStream = default(Stream);
 
-            if (context.Request.Headers.TryGetValue(HeaderNames.ContentEncoding, out var contentEncodingValue) && (contentEncodingValue.Count > 0))
+            if (context.Request.Headers.TryGetValue(HeaderNames.ContentEncoding, out var encodingNames) && (encodingNames.Count > 0))
             {
-                var encodingNames = (string[])contentEncodingValue;
-                var encodingsLeft = encodingNames.Length;
+                var encodingsLeft = encodingNames.Count;
                 var decodingStream = context.Request.Body;
 
-                for (var i = encodingNames.Length - 1; i >= 0; i--)
+                for (var i = encodingNames.Count - 1; i >= 0; i--)
                 {
                     if (!_providers.TryGetValue(encodingNames[i], out var provider))
                     {
@@ -88,7 +87,7 @@ namespace Community.AspNetCore.RequestDecompression
                     context.Request.ContentLength = context.Request.Body.Length;
                     context.Request.Headers.Remove(HeaderNames.ContentEncoding);
                 }
-                else if (encodingsLeft < encodingNames.Length)
+                else if (encodingsLeft < encodingNames.Count)
                 {
                     var encodingNamesLeft = new string[encodingsLeft];
 

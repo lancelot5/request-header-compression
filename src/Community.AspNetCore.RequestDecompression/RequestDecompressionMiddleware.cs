@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Community.AspNetCore.RequestDecompression.Resources;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
 namespace Community.AspNetCore.RequestDecompression
@@ -34,7 +36,11 @@ namespace Community.AspNetCore.RequestDecompression
                 var provider = (IDecompressionProvider)ActivatorUtilities.CreateInstance(services, type);
                 var encodingName = provider.EncodingName;
 
-                if (string.Compare(encodingName, "identity", StringComparison.OrdinalIgnoreCase) == 0)
+                if (providers.ContainsKey(encodingName))
+                {
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, Strings.GetString("encoding.duplicate"), encodingName));
+                }
+                if (StringSegment.Equals(encodingName, "identity", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new InvalidOperationException(Strings.GetString("encoding.identity"));
                 }

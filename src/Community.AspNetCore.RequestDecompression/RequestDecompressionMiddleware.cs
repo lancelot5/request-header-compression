@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using Community.AspNetCore.RequestDecompression.Resources;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -28,9 +29,17 @@ namespace Community.AspNetCore.RequestDecompression
 
             var providers = new Dictionary<string, IDecompressionProvider>(options.Value.Providers.Count, StringComparer.OrdinalIgnoreCase);
 
-            foreach (var kvp in options.Value.Providers)
+            foreach (var type in options.Value.Providers)
             {
-                providers[kvp.Key] = (IDecompressionProvider)ActivatorUtilities.CreateInstance(services, kvp.Value);
+                var provider = (IDecompressionProvider)ActivatorUtilities.CreateInstance(services, type);
+                var encodingName = provider.EncodingName;
+
+                if (string.Compare(encodingName, "identity", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    throw new InvalidOperationException(Strings.GetString("encoding.identity"));
+                }
+
+                providers[encodingName] = provider;
             }
 
             providers["identity"] = null;

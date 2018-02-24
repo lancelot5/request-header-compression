@@ -62,8 +62,8 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks.Suites
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>("deflate");
-            options.Register<GzipDecompressionProvider>("gzip");
+            options.Register<DeflateDecompressionProvider>();
+            options.Register<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc

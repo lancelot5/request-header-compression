@@ -27,14 +27,19 @@ public class BrotliDecompressionProvider : IDecompressionProvider
     {
         return new BrotliStream(outputStream, CompressionMode.Decompress);
     }
+
+    public string EncodingName
+    {
+        get => "br";
+    }
 }
 ```
 ```cs
 var options = new RequestDecompressionOptions();
 
-options.Register<DeflateDecompressionProvider>("deflate");
-options.Register<GzipDecompressionProvider>("gzip");
-options.Register<BrotliDecompressionProvider>("br");
+options.Register<DeflateDecompressionProvider>();
+options.Register<GzipDecompressionProvider>();
+options.Register<BrotliDecompressionProvider>();
 options.SkipUnsupportedEncodings = false;
 ```
 ```cs

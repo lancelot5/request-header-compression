@@ -15,5 +15,10 @@ namespace Community.AspNetCore.RequestDecompression
         {
             return new GZipStream(outputStream, CompressionMode.Decompress);
         }
+
+        string IDecompressionProvider.EncodingName
+        {
+            get => "gzip";
+        }
     }
 }

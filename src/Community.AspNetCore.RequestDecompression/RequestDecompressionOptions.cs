@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Community.AspNetCore.RequestDecompression.Resources;
 
 namespace Community.AspNetCore.RequestDecompression
 {
     /// <summary>Provides options for the HTTP request decompression middleware.</summary>
     public sealed class RequestDecompressionOptions
     {
-        private readonly Dictionary<string, Type> _providers = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<Type> _providers = new HashSet<Type>();
 
         /// <summary>Initializes a new instance of the <see cref="RequestDecompressionOptions" /> class.</summary>
         public RequestDecompressionOptions()
@@ -17,36 +16,24 @@ namespace Community.AspNetCore.RequestDecompression
 
         internal void Apply(RequestDecompressionOptions options)
         {
-            foreach (var kvp in options.Providers)
+            foreach (var type in options.Providers)
             {
-                _providers[kvp.Key] = kvp.Value;
+                _providers.Add(type);
             }
 
             SkipUnsupportedEncodings = options.SkipUnsupportedEncodings;
         }
 
         /// <summary>Registers the decompression provider.</summary>
-        /// <typeparam name="T">The type of decompression provider.</typeparam>
-        /// <param name="encodingName">The encoding name (case insensitive).</param>
-        /// <exception cref="ArgumentException"><paramref name="encodingName" /> is the "identity" value.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="encodingName" /> is <see langword="null" />.</exception>
-        public void Register<T>(string encodingName)
+        /// <typeparam name="T">The type of the decompression provider.</typeparam>
+        public void Register<T>()
             where T : class, IDecompressionProvider
         {
-            if (encodingName == null)
-            {
-                throw new ArgumentNullException(nameof(encodingName));
-            }
-            if (string.Compare(encodingName, "identity", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                throw new ArgumentException(Strings.GetString("encoding.identity"), nameof(encodingName));
-            }
-
-            _providers[encodingName] = typeof(T);
+            _providers.Add(typeof(T));
         }
 
-        /// <summary>Gets the dictionary of decompression providers with encoding name as a key.</summary>
-        public IReadOnlyDictionary<string, Type> Providers
+        /// <summary>Gets the collection of decompression provider types.</summary>
+        public IReadOnlyCollection<Type> Providers
         {
             get => _providers;
         }

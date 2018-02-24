@@ -59,8 +59,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>("deflate");
-            options.Register<GzipDecompressionProvider>("gzip");
+            options.Register<DeflateDecompressionProvider>();
+            options.Register<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureLogging(lb => lb
@@ -92,8 +92,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>("deflate");
-            options.Register<GzipDecompressionProvider>("gzip");
+            options.Register<DeflateDecompressionProvider>();
+            options.Register<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureLogging(lb => lb
@@ -125,7 +125,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>("deflate");
+            options.Register<DeflateDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureLogging(lb => lb
@@ -156,7 +156,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<GzipDecompressionProvider>("gzip");
+            options.Register<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureLogging(lb => lb
@@ -187,8 +187,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>("deflate");
-            options.Register<GzipDecompressionProvider>("gzip");
+            options.Register<DeflateDecompressionProvider>();
+            options.Register<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureLogging(lb => lb
@@ -221,8 +221,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>("deflate");
-            options.Register<GzipDecompressionProvider>("gzip");
+            options.Register<DeflateDecompressionProvider>();
+            options.Register<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureLogging(lb => lb

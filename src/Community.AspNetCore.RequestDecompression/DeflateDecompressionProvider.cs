@@ -15,5 +15,10 @@ namespace Community.AspNetCore.RequestDecompression
         {
             return new DeflateStream(outputStream, CompressionMode.Decompress);
         }
+
+        string IDecompressionProvider.EncodingName
+        {
+            get => "deflate";
+        }
     }
 }

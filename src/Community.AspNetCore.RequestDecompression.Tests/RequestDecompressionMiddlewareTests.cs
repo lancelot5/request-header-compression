@@ -70,7 +70,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForDecodedContent))
                 .Configure(ab => ab
-                    .UseResponseCompression()
+                    .UseRequestDecompression()
                     .UseRequestTest());
 
             using (var server = new TestServer(builder))
@@ -103,7 +103,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForDecodedContent))
                 .Configure(ab => ab
-                    .UseResponseCompression()
+                    .UseRequestDecompression()
                     .UseRequestTest());
 
             using (var server = new TestServer(builder))
@@ -135,7 +135,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForDecodedContent))
                 .Configure(ab => ab
-                    .UseResponseCompression()
+                    .UseRequestDecompression()
                     .UseRequestTest());
 
             using (var server = new TestServer(builder))
@@ -166,7 +166,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForDecodedContent))
                 .Configure(ab => ab
-                    .UseResponseCompression()
+                    .UseRequestDecompression()
                     .UseRequestTest());
 
             using (var server = new TestServer(builder))
@@ -198,7 +198,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForDecodedContent))
                 .Configure(ab => ab
-                    .UseResponseCompression()
+                    .UseRequestDecompression()
                     .UseRequestTest());
 
             using (var server = new TestServer(builder))
@@ -232,7 +232,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForPartiallyDecodedContent))
                 .Configure(ab => ab
-                    .UseResponseCompression()
+                    .UseRequestDecompression()
                     .UseRequestTest());
 
             using (var server = new TestServer(builder))
@@ -264,7 +264,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForUndecodedContent))
                 .Configure(ab => ab
-                    .UseResponseCompression()
+                    .UseRequestDecompression()
                     .UseRequestTest());
 
             using (var server = new TestServer(builder))
@@ -296,7 +296,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForUndecodedContent))
                 .Configure(ab => ab
-                    .UseResponseCompression()
+                    .UseRequestDecompression()
                     .UseRequestTest());
 
             using (var server = new TestServer(builder))

@@ -69,7 +69,7 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks.Suites
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options))
                 .Configure(ab => ab
-                    .UseResponseCompression());
+                    .UseRequestDecompression());
 
             _server = new TestServer(builder);
             _client = _server.CreateClient();

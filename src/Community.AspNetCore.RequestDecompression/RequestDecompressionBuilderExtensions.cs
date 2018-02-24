@@ -10,7 +10,7 @@ namespace Community.AspNetCore.RequestDecompression
         /// <param name="builder">The <see cref="IApplicationBuilder" /> to add the middleware to.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="builder" /> is <see langword="null" />.</exception>
-        public static IApplicationBuilder UseResponseCompression(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseRequestDecompression(this IApplicationBuilder builder)
         {
             if (builder == null)
             {

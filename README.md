@@ -40,5 +40,5 @@ options.SkipUnsupportedEncodings = false;
 ```cs
 builder
     .ConfigureServices(sc => sc.AddRequestDecompression(options))
-    .Configure(ab => ab.UseResponseCompression())
+    .Configure(ab => ab.UseRequestDecompression())
 ```

@@ -8,23 +8,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Community.AspNetCore.RequestDecompression.Tests
 {
     public sealed class RequestDecompressionMiddlewareTests
     {
-        private readonly ITestOutputHelper _output;
-
-        public RequestDecompressionMiddlewareTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         private static void TestActionForDecodedContent(HttpRequest request)
         {
             Assert.False(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
@@ -63,9 +54,6 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             options.Register<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
-                .ConfigureLogging(lb => lb
-                    .SetMinimumLevel(LogLevel.Trace)
-                    .AddXunit(_output))
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForDecodedContent))
@@ -96,9 +84,6 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             options.Register<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
-                .ConfigureLogging(lb => lb
-                    .SetMinimumLevel(LogLevel.Trace)
-                    .AddXunit(_output))
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForDecodedContent))
@@ -128,9 +113,6 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             options.Register<DeflateDecompressionProvider>();
 
             var builder = new WebHostBuilder()
-                .ConfigureLogging(lb => lb
-                    .SetMinimumLevel(LogLevel.Trace)
-                    .AddXunit(_output))
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForDecodedContent))
@@ -159,9 +141,6 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             options.Register<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
-                .ConfigureLogging(lb => lb
-                    .SetMinimumLevel(LogLevel.Trace)
-                    .AddXunit(_output))
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForDecodedContent))
@@ -191,9 +170,6 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             options.Register<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
-                .ConfigureLogging(lb => lb
-                    .SetMinimumLevel(LogLevel.Trace)
-                    .AddXunit(_output))
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForDecodedContent))
@@ -225,9 +201,6 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             options.Register<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
-                .ConfigureLogging(lb => lb
-                    .SetMinimumLevel(LogLevel.Trace)
-                    .AddXunit(_output))
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForPartiallyDecodedContent))
@@ -257,9 +230,6 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             var options = new RequestDecompressionOptions();
 
             var builder = new WebHostBuilder()
-                .ConfigureLogging(lb => lb
-                    .SetMinimumLevel(LogLevel.Trace)
-                    .AddXunit(_output))
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForUndecodedContent))
@@ -289,9 +259,6 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             };
 
             var builder = new WebHostBuilder()
-                .ConfigureLogging(lb => lb
-                    .SetMinimumLevel(LogLevel.Trace)
-                    .AddXunit(_output))
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
                     .AddRequestTest(TestActionForUndecodedContent))

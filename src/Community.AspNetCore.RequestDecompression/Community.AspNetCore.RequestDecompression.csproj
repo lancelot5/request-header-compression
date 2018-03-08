@@ -11,8 +11,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <OutputPath>$(RepositoryPath)/bin/bin/$(AssemblyName)/$(Configuration)/</OutputPath>
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)../solution.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>True</SignAssembly>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <DebugType>none</DebugType>

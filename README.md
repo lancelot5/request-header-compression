@@ -37,8 +37,7 @@ public class BrotliDecompressionProvider : IDecompressionProvider
 ```cs
 var options = new RequestDecompressionOptions();
 
-options.Register<DeflateDecompressionProvider>();
-options.Register<GzipDecompressionProvider>();
+options.UseDefaults();
 options.Register<BrotliDecompressionProvider>();
 options.SkipUnsupportedEncodings = false;
 ```

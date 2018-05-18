@@ -2,12 +2,11 @@
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;
-using BenchmarkDotNet.Engines;
-using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Reports;
-using BenchmarkDotNet.Validators;
+using BenchmarkDotNet.Running;
 using Community.AspNetCore.RequestDecompression.Benchmarks.Framework;
+using Community.AspNetCore.RequestDecompression.Benchmarks.Suites;
 
 namespace Community.AspNetCore.RequestDecompression.Benchmarks
 {
@@ -17,15 +16,13 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks
         {
             var configuration = ManualConfig.CreateEmpty();
 
-            configuration.Add(JitOptimizationsValidator.DontFailOnError);
-            configuration.Add(Job.Dry.With(RunStrategy.Throughput).WithTargetCount(2));
+            configuration.Add(new SimpleBenchmarkExporter());
             configuration.Add(MemoryDiagnoser.Default);
             configuration.Add(ConsoleLogger.Default);
-            configuration.Add(new SimpleBenchmarkExporter());
             configuration.Add(DefaultConfig.Instance.GetColumnProviders().ToArray());
             configuration.Set(SummaryStyle.Default.WithSizeUnit(SizeUnit.B));
 
-            BenchmarkSuiteRunner.Run(typeof(Program).Assembly, configuration);
+            BenchmarkRunner.Run(typeof(RequestDecompressionMiddlewareBenchmarks), configuration);
         }
     }
 }

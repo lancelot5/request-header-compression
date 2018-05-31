@@ -1,6 +1,6 @@
 ## Community.AspNetCore.RequestDecompression
 
-Transparent HTTP request decompression middleware for ASP.NET Core 2.0, which serves as a complementary component to the [Microsoft.AspNetCore.ResponseCompression](https://www.nuget.org/packages/Microsoft.AspNetCore.ResponseCompression/) package.
+Transparent HTTP request decompression middleware for ASP.NET Core 2, which serves as a complementary component to the [Microsoft.AspNetCore.ResponseCompression](https://www.nuget.org/packages/Microsoft.AspNetCore.ResponseCompression/) package.
 
 [![NuGet package](https://img.shields.io/nuget/v/Community.AspNetCore.RequestDecompression.svg?style=flat-square)](https://www.nuget.org/packages/Community.AspNetCore.RequestDecompression)
 
@@ -46,3 +46,5 @@ builder
     .ConfigureServices(sc => sc.AddRequestDecompression(options))
     .Configure(ab => ab.UseRequestDecompression())
 ```
+
+Complete Brotli decompression provider, which can be added to an ASP.NET Core 2.1 app as a source file: [BrotliDecompressionProvider.cs](./src/Community.AspNetCore.RequestDecompression.Examples/BrotliDecompressionProvider.cs).

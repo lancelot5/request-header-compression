@@ -85,19 +85,19 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks.Suites
             return result;
         }
 
-        [Benchmark(Description = "empt", Baseline = true)]
+        [Benchmark(Description = "empty", Baseline = true)]
         public async Task<object> DecompressEmptyEncoding()
         {
             return await _client.PostAsync(_server.BaseAddress, CreateHttpContent(""));
         }
 
-        [Benchmark(Description = "idty")]
+        [Benchmark(Description = "identity")]
         public async Task<object> DecompressIdentityEncoding()
         {
             return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("identity"));
         }
 
-        [Benchmark(Description = "defl")]
+        [Benchmark(Description = "deflate")]
         public async Task<object> DecompressDeflateEncoding()
         {
             return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("deflate"));
@@ -109,7 +109,7 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks.Suites
             return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("gzip"));
         }
 
-        [Benchmark(Description = "unkn")]
+        [Benchmark(Description = "unknown")]
         public async Task<object> DecompressUnknownEncoding()
         {
             return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("unknown"));

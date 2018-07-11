@@ -6,7 +6,7 @@ Transparent HTTP request decompression middleware for ASP.NET Core 2, which serv
 
 ### Features
 
-- The middleware includes decompression providers for the `gzip` and `DEFLATE` algorithms.
+- The middleware includes decompression providers for the `gzip`, `DEFLATE`, and `Brotli` algorithms.
 - The middleware supports decoding of content with multiple encodings.
 - The middleware provides an ability to use a custom provider for the particular encoding.
 - The middleware supports responding with HTTP status code `415` if an unsupported encoding is found.
@@ -16,20 +16,21 @@ Transparent HTTP request decompression middleware for ASP.NET Core 2, which serv
 ### Specifics
 
 - The middleware adds the `Content-Length` header if all encodings were handled.
+- The decompression provider for `Brotli` algorithm is available only for .NET Core 2.1 and higher.
 
 ### Examples
 
 ```cs
-public class BrotliDecompressionProvider : IDecompressionProvider
+public class LzmaDecompressionProvider : IDecompressionProvider
 {
     public Stream CreateStream(Stream outputStream)
     {
-        return new BrotliStream(outputStream, CompressionMode.Decompress);
+        return new LzmaStream(outputStream, CompressionMode.Decompress);
     }
 
     public string EncodingName
     {
-        get => "br";
+        get => "lzma";
     }
 }
 ```
@@ -37,7 +38,7 @@ public class BrotliDecompressionProvider : IDecompressionProvider
 var options = new RequestDecompressionOptions();
 
 options.UseDefaults();
-options.Register<BrotliDecompressionProvider>();
+options.Register<LzmaDecompressionProvider>();
 options.SkipUnsupportedEncodings = false;
 ```
 ```cs
@@ -45,5 +46,3 @@ builder
     .ConfigureServices(sc => sc.AddRequestDecompression(options))
     .Configure(ab => ab.UseRequestDecompression())
 ```
-
-Complete Brotli decompression provider, which can be added to an ASP.NET Core 2.1 app as a source file: [BrotliDecompressionProvider.cs](./src/Community.AspNetCore.RequestDecompression.Examples/BrotliDecompressionProvider.cs).

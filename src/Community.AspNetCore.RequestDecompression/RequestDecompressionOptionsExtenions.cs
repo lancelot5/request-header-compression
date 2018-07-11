@@ -2,8 +2,8 @@
 
 namespace Community.AspNetCore.RequestDecompression
 {
-    /// <summary>The extensions for the <see cref="RequestDecompressionOptions" />.</summary>
-    internal static class RequestDecompressionOptionsExtenions
+    /// <summary>The extensions for the <see cref="RequestDecompressionOptions" /> class.</summary>
+    public static class RequestDecompressionOptionsExtenions
     {
         /// <summary>Setups default values and registers default compression providers.</summary>
         /// <param name="options">The middleware options to modify.</param>
@@ -17,6 +17,9 @@ namespace Community.AspNetCore.RequestDecompression
 
             options.Register<DeflateDecompressionProvider>();
             options.Register<GzipDecompressionProvider>();
+#if NETCOREAPP2_1
+            options.Register<BrotliDecompressionProvider>();
+#endif
             options.SkipUnsupportedEncodings = true;
         }
     }

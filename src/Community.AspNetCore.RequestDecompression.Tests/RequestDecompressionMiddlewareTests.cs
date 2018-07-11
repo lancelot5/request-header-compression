@@ -162,12 +162,11 @@ namespace Community.AspNetCore.RequestDecompression.Tests
         }
 
         [Fact]
-        public async void HandleMultipleEncodings()
+        public async void HandleBrotliEncoding()
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>();
-            options.Register<GzipDecompressionProvider>();
+            options.Register<BrotliDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
@@ -181,11 +180,40 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             {
                 using (var client = server.CreateClient())
                 {
-                    var requestContent = new ByteArrayContent(CompressWithGzip(CompressWithDeflate(CreateContentSample())));
+                    var requestContent = new ByteArrayContent(CompressWithBrotli(CreateContentSample()));
+
+                    requestContent.Headers.ContentEncoding.Add("br");
+
+                    await client.PostAsync(server.BaseAddress, requestContent);
+                }
+            }
+        }
+
+        [Fact]
+        public async void HandleMultipleEncodings()
+        {
+            var options = new RequestDecompressionOptions();
+
+            options.UseDefaults();
+
+            var builder = new WebHostBuilder()
+                .ConfigureServices(sc => sc
+                    .AddRequestDecompression(options)
+                    .AddRequestTest(TestActionForDecodedContent))
+                .Configure(ab => ab
+                    .UseRequestDecompression()
+                    .UseRequestTest());
+
+            using (var server = new TestServer(builder))
+            {
+                using (var client = server.CreateClient())
+                {
+                    var requestContent = new ByteArrayContent(CompressWithBrotli(CompressWithGzip(CompressWithDeflate(CreateContentSample()))));
 
                     requestContent.Headers.ContentEncoding.Add("identity");
                     requestContent.Headers.ContentEncoding.Add("deflate");
                     requestContent.Headers.ContentEncoding.Add("gzip");
+                    requestContent.Headers.ContentEncoding.Add("br");
 
                     await client.PostAsync(server.BaseAddress, requestContent);
                 }
@@ -197,8 +225,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>();
-            options.Register<GzipDecompressionProvider>();
+            options.UseDefaults();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
@@ -212,12 +239,13 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             {
                 using (var client = server.CreateClient())
                 {
-                    var requestContent = new ByteArrayContent(CompressWithGzip(CompressWithDeflate(CreateContentSample())));
+                    var requestContent = new ByteArrayContent(CompressWithBrotli(CompressWithGzip(CompressWithDeflate(CreateContentSample()))));
 
                     requestContent.Headers.ContentEncoding.Add("identity");
                     requestContent.Headers.ContentEncoding.Add("unknown");
                     requestContent.Headers.ContentEncoding.Add("deflate");
                     requestContent.Headers.ContentEncoding.Add("gzip");
+                    requestContent.Headers.ContentEncoding.Add("br");
 
                     await client.PostAsync(server.BaseAddress, requestContent);
                 }
@@ -299,6 +327,19 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             using (var outputStream = new MemoryStream())
             {
                 using (var compressionStream = new GZipStream(outputStream, CompressionLevel.Optimal))
+                {
+                    compressionStream.Write(content, 0, content.Length);
+                }
+
+                return outputStream.ToArray();
+            }
+        }
+
+        private static byte[] CompressWithBrotli(byte[] content)
+        {
+            using (var outputStream = new MemoryStream())
+            {
+                using (var compressionStream = new BrotliStream(outputStream, CompressionLevel.Optimal))
                 {
                     compressionStream.Write(content, 0, content.Length);
                 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// © Alexander Kozlenko. Licensed under the MIT License.
+
+using System;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Community.AspNetCore.RequestDecompression

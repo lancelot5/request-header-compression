@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿// © Alexander Kozlenko. Licensed under the MIT License.
+
+using System.IO;
 
 namespace Community.AspNetCore.RequestDecompression
 {

@@ -1,20 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Version>1.2.6</Version>
-    <Description><![CDATA[Transparent HTTP request decompression middleware for ASP.NET Core 2]]></Description>
-    <Authors><![CDATA[Alexander Kozlenko]]></Authors>
-    <Copyright><![CDATA[© Alexander Kozlenko. All rights reserved.]]></Copyright>
-    <PackageTags><![CDATA[aspnetcore decompression gzip deflate brotli]]></PackageTags>
-    <PackageProjectUrl>https://github.com/alexanderkozlenko/aspnetcore-request-decompression</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.github.com/alexanderkozlenko/aspnetcore-request-decompression/master/LICENSE</PackageLicenseUrl>
-  </PropertyGroup>
+  <Import Project="$(SolutionDirectory)\$(MSBuildProjectName).Package.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp2.1</TargetFrameworks>
-    <OutputPath>$(RepositoryPath)\bin\bin\$(AssemblyName)\$(Configuration)\</OutputPath>
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\Open.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(SolutionDirectory)\Open.snk</AssemblyOriginatorKeyFile>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <DebugType>none</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
@@ -23,4 +15,5 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
     <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.1.1" />
   </ItemGroup>
+  <Import Project="$(SolutionDirectory)\$(MSBuildProjectName).Package.targets" />
 </Project>

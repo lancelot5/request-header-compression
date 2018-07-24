@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 
-namespace Community.AspNetCore.RequestDecompression.Tests.Middleware
+namespace Community.AspNetCore.RequestDecompression.IntegrationTests.Middleware
 {
     internal static class RequestTestBuilderExtensions
     {

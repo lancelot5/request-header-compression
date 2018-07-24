@@ -1,4 +1,6 @@
-﻿#if NETCOREAPP2_1
+﻿// © Alexander Kozlenko. Licensed under the MIT License.
+
+#if NETCOREAPP2_1
 
 using System.IO;
 using System.IO.Compression;

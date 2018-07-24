@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace Community.AspNetCore.RequestDecompression.Tests.Middleware
+namespace Community.AspNetCore.RequestDecompression.IntegrationTests.Middleware
 {
     internal sealed class RequestTestMiddleware : IMiddleware
     {

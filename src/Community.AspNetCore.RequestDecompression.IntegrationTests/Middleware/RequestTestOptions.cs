@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 
-namespace Community.AspNetCore.RequestDecompression.Tests.Middleware
+namespace Community.AspNetCore.RequestDecompression.IntegrationTests.Middleware
 {
     internal sealed class RequestTestOptions
     {

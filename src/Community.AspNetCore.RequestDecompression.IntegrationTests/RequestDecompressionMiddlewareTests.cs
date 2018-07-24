@@ -3,23 +3,25 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
-using Community.AspNetCore.RequestDecompression.Tests.Middleware;
+using System.Threading.Tasks;
+using Community.AspNetCore.RequestDecompression.IntegrationTests.Middleware;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Community.AspNetCore.RequestDecompression.Tests
+namespace Community.AspNetCore.RequestDecompression.IntegrationTests
 {
+    [TestClass]
     public sealed class RequestDecompressionMiddlewareTests
     {
         private static void TestActionForDecodedContent(HttpRequest request)
         {
-            Assert.False(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
-            Assert.True(request.Headers.ContainsKey(HeaderNames.ContentLength));
+            Assert.IsFalse(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
+            Assert.IsTrue(request.Headers.ContainsKey(HeaderNames.ContentLength));
 
             var content = default(byte[]);
 
@@ -29,24 +31,25 @@ namespace Community.AspNetCore.RequestDecompression.Tests
                 content = buffer.ToArray();
             }
 
-            Assert.Equal(content.Length.ToString(CultureInfo.InvariantCulture), request.Headers[HeaderNames.ContentLength]);
-            Assert.Equal(CreateContentSample(), content);
+            Assert.AreEqual(content.Length.ToString(CultureInfo.InvariantCulture), request.Headers[HeaderNames.ContentLength].ToString());
+
+            CollectionAssert.AreEqual(CreateContentSample(), content);
         }
 
         private void TestActionForPartiallyDecodedContent(HttpRequest request)
         {
-            Assert.True(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
-            Assert.Equal((StringValues)new[] { "identity", "unknown" }, request.Headers[HeaderNames.ContentEncoding]);
+            Assert.IsTrue(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
+            Assert.AreEqual((StringValues)new[] { "identity", "unknown" }, request.Headers[HeaderNames.ContentEncoding]);
         }
 
         private void TestActionForUndecodedContent(HttpRequest request)
         {
-            Assert.True(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
-            Assert.Equal((StringValues)"unknown", request.Headers[HeaderNames.ContentEncoding]);
+            Assert.IsTrue(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
+            Assert.AreEqual((StringValues)"unknown", request.Headers[HeaderNames.ContentEncoding]);
         }
 
-        [Fact]
-        public async void HandleEmptyEncoding()
+        [TestMethod]
+        public async Task HandleEmptyEncoding()
         {
             var options = new RequestDecompressionOptions();
 
@@ -75,8 +78,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             }
         }
 
-        [Fact]
-        public async void HandleIdentityEncoding()
+        [TestMethod]
+        public async Task HandleIdentityEncoding()
         {
             var options = new RequestDecompressionOptions();
 
@@ -105,8 +108,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             }
         }
 
-        [Fact]
-        public async void HandleDeflateEncoding()
+        [TestMethod]
+        public async Task HandleDeflateEncoding()
         {
             var options = new RequestDecompressionOptions();
 
@@ -133,8 +136,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             }
         }
 
-        [Fact]
-        public async void HandleGzipEncoding()
+        [TestMethod]
+        public async Task HandleGzipEncoding()
         {
             var options = new RequestDecompressionOptions();
 
@@ -161,8 +164,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             }
         }
 
-        [Fact]
-        public async void HandleBrotliEncoding()
+        [TestMethod]
+        public async Task HandleBrotliEncoding()
         {
             var options = new RequestDecompressionOptions();
 
@@ -189,8 +192,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             }
         }
 
-        [Fact]
-        public async void HandleMultipleEncodings()
+        [TestMethod]
+        public async Task HandleMultipleEncodings()
         {
             var options = new RequestDecompressionOptions();
 
@@ -220,8 +223,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             }
         }
 
-        [Fact]
-        public async void HandleMultipleEncodingsWithUknown()
+        [TestMethod]
+        public async Task HandleMultipleEncodingsWithUknown()
         {
             var options = new RequestDecompressionOptions();
 
@@ -252,8 +255,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             }
         }
 
-        [Fact]
-        public async void HandlUnknownEncoding()
+        [TestMethod]
+        public async Task HandlUnknownEncoding()
         {
             var options = new RequestDecompressionOptions();
 
@@ -278,8 +281,8 @@ namespace Community.AspNetCore.RequestDecompression.Tests
             }
         }
 
-        [Fact]
-        public async void HandlUnknownEncodingWithReject()
+        [TestMethod]
+        public async Task HandlUnknownEncodingWithReject()
         {
             var options = new RequestDecompressionOptions()
             {
@@ -304,7 +307,7 @@ namespace Community.AspNetCore.RequestDecompression.Tests
 
                     var response = await client.PostAsync(server.BaseAddress, requestContent);
 
-                    Assert.Equal(HttpStatusCode.UnsupportedMediaType, response.StatusCode);
+                    Assert.AreEqual(HttpStatusCode.UnsupportedMediaType, response.StatusCode);
                 }
             }
         }

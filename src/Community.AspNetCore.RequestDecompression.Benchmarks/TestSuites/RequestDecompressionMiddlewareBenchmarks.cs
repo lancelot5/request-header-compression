@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Community.AspNetCore.RequestDecompression.Benchmarks.Suites
+namespace Community.AspNetCore.RequestDecompression.Benchmarks.TestSuites
 {
-    public abstract class RequestDecompressionMiddlewareBenchmarks
+    public sealed class RequestDecompressionMiddlewareBenchmarks
     {
         private static readonly IReadOnlyDictionary<string, byte[]> _resources = CreateResourceDictionary();
 
@@ -56,7 +56,7 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks.Suites
             return resources;
         }
 
-        protected RequestDecompressionMiddlewareBenchmarks()
+        public RequestDecompressionMiddlewareBenchmarks()
         {
             var options = new RequestDecompressionOptions();
 
@@ -85,31 +85,31 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks.Suites
             return result;
         }
 
-        [Benchmark(Description = "empty", Baseline = true)]
+        [Benchmark(Description = "Content-Encoding=         ", Baseline = true)]
         public async Task<object> DecompressEmptyEncoding()
         {
             return await _client.PostAsync(_server.BaseAddress, CreateHttpContent(""));
         }
 
-        [Benchmark(Description = "identity")]
+        [Benchmark(Description = "Content-Encoding=identity ")]
         public async Task<object> DecompressIdentityEncoding()
         {
             return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("identity"));
         }
 
-        [Benchmark(Description = "deflate")]
+        [Benchmark(Description = "Content-Encoding=deflate  ")]
         public async Task<object> DecompressDeflateEncoding()
         {
             return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("deflate"));
         }
 
-        [Benchmark(Description = "gzip")]
+        [Benchmark(Description = "Content-Encoding=gzip     ")]
         public async Task<object> DecompressGzipEncoding()
         {
             return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("gzip"));
         }
 
-        [Benchmark(Description = "unknown")]
+        [Benchmark(Description = "Content-Encoding=unknown"  )]
         public async Task<object> DecompressUnknownEncoding()
         {
             return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("unknown"));

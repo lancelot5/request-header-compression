@@ -53,8 +53,8 @@ namespace Community.AspNetCore.RequestDecompression.IntegrationTests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>();
-            options.Register<GzipDecompressionProvider>();
+            options.AddProvider<DeflateDecompressionProvider>();
+            options.AddProvider<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
@@ -83,8 +83,8 @@ namespace Community.AspNetCore.RequestDecompression.IntegrationTests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>();
-            options.Register<GzipDecompressionProvider>();
+            options.AddProvider<DeflateDecompressionProvider>();
+            options.AddProvider<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
@@ -113,7 +113,7 @@ namespace Community.AspNetCore.RequestDecompression.IntegrationTests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>();
+            options.AddProvider<DeflateDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
@@ -141,7 +141,7 @@ namespace Community.AspNetCore.RequestDecompression.IntegrationTests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<GzipDecompressionProvider>();
+            options.AddProvider<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
@@ -169,7 +169,7 @@ namespace Community.AspNetCore.RequestDecompression.IntegrationTests
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<BrotliDecompressionProvider>();
+            options.AddProvider<BrotliDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Community.AspNetCore.RequestDecompression.Resources;
 
 namespace Community.AspNetCore.RequestDecompression
 {
@@ -10,10 +11,11 @@ namespace Community.AspNetCore.RequestDecompression
     {
         private readonly HashSet<Type> _providers = new HashSet<Type>();
 
+        private bool _skipUnsupportedEncodings = true;
+
         /// <summary>Initializes a new instance of the <see cref="RequestDecompressionOptions" /> class.</summary>
         public RequestDecompressionOptions()
         {
-            SkipUnsupportedEncodings = true;
         }
 
         internal void Apply(RequestDecompressionOptions options)
@@ -23,19 +25,35 @@ namespace Community.AspNetCore.RequestDecompression
                 _providers.Add(type);
             }
 
-            SkipUnsupportedEncodings = options.SkipUnsupportedEncodings;
+            _skipUnsupportedEncodings = options.SkipUnsupportedEncodings;
         }
 
-        /// <summary>Registers the decompression provider.</summary>
+        /// <summary>Adds the specified decompression provider.</summary>
+        /// <param name="type">The type of the decompression provider.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" />.</exception>
+        public void AddProvider(Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+            if (!typeof(IDecompressionProvider).IsAssignableFrom(type))
+            {
+                throw new ArgumentException(Strings.GetString("provider.invalid_type"), nameof(type));
+            }
+
+            _providers.Add(type);
+        }
+
+        /// <summary>Adds the specified decompression provider.</summary>
         /// <typeparam name="T">The type of the decompression provider.</typeparam>
-        public void Register<T>()
-            where T : class, IDecompressionProvider
+        public void AddProvider<T>()
+            where T : IDecompressionProvider
         {
             _providers.Add(typeof(T));
         }
 
-        /// <summary>Gets the collection of decompression provider types.</summary>
-        public IReadOnlyCollection<Type> Providers
+        internal IReadOnlyCollection<Type> Providers
         {
             get => _providers;
         }
@@ -43,8 +61,8 @@ namespace Community.AspNetCore.RequestDecompression
         /// <summary>Gets or sets the value indicating whether the middleware should pass content with unsupported encoding to the next middleware in the request pipeline.</summary>
         public bool SkipUnsupportedEncodings
         {
-            get;
-            set;
+            get => _skipUnsupportedEncodings;
+            set => _skipUnsupportedEncodings = value;
         }
     }
 }

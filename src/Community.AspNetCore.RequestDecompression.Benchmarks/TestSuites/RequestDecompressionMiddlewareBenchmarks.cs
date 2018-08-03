@@ -60,8 +60,8 @@ namespace Community.AspNetCore.RequestDecompression.Benchmarks.TestSuites
         {
             var options = new RequestDecompressionOptions();
 
-            options.Register<DeflateDecompressionProvider>();
-            options.Register<GzipDecompressionProvider>();
+            options.AddProvider<DeflateDecompressionProvider>();
+            options.AddProvider<GzipDecompressionProvider>();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc

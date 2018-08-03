@@ -123,4 +123,7 @@
   <data name="encoding.identity" xml:space="preserve">
     <value>The "identity" encoding name is reserved</value>
   </data>
+  <data name="provider.invalid_type" xml:space="preserve">
+    <value>The specified type does not implement decompression provider interface</value>
+  </data>
 </root>

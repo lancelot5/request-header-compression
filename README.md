@@ -38,7 +38,7 @@ public class LzmaDecompressionProvider : IDecompressionProvider
 var options = new RequestDecompressionOptions();
 
 options.UseDefaults();
-options.Register<LzmaDecompressionProvider>();
+options.AddProvider<LzmaDecompressionProvider>();
 options.SkipUnsupportedEncodings = false;
 ```
 ```cs

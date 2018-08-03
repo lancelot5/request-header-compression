@@ -17,10 +17,10 @@ namespace Community.AspNetCore.RequestDecompression
                 throw new ArgumentNullException(nameof(options));
             }
 
-            options.Register<DeflateDecompressionProvider>();
-            options.Register<GzipDecompressionProvider>();
+            options.AddProvider<DeflateDecompressionProvider>();
+            options.AddProvider<GzipDecompressionProvider>();
 #if NETCOREAPP2_1
-            options.Register<BrotliDecompressionProvider>();
+            options.AddProvider<BrotliDecompressionProvider>();
 #endif
             options.SkipUnsupportedEncodings = true;
         }

@@ -33,8 +33,7 @@ public class LzmaDecompressionProvider : IDecompressionProvider
         get => "lzma";
     }
 }
-```
-```cs
+
 public class Startup : IStartup
 {
     public void ConfigureServices(IServiceCollection services)

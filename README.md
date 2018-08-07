@@ -4,7 +4,7 @@ Transparent HTTP request decompression middleware for ASP.NET Core 2, which serv
 
 [![NuGet package](https://img.shields.io/nuget/v/Community.AspNetCore.RequestDecompression.svg?style=flat-square)](https://www.nuget.org/packages/Community.AspNetCore.RequestDecompression)
 
-### Features
+### Important Features
 
 - The middleware includes decompression providers for the `gzip`, `DEFLATE`, and `Brotli` algorithms.
 - The middleware supports decoding of content with multiple encodings.
@@ -13,12 +13,12 @@ Transparent HTTP request decompression middleware for ASP.NET Core 2, which serv
 - The middleware supports automatic disposing of disposable decoding providers.
 - The middleware supports the `identity` encoding value.
 
-### Specifics
+### Characteristics
 
 - The middleware adds the `Content-Length` header if all encodings were handled.
 - The decompression provider for `Brotli` algorithm is available only for .NET Core 2.1 and higher.
 
-### Examples
+### Usage Examples
 
 ```cs
 public class LzmaDecompressionProvider : IDecompressionProvider

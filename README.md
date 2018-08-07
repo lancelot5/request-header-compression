@@ -35,14 +35,22 @@ public class LzmaDecompressionProvider : IDecompressionProvider
 }
 ```
 ```cs
-var options = new RequestDecompressionOptions();
+public class Startup : IStartup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        var options = new RequestDecompressionOptions();
 
-options.UseDefaults();
-options.AddProvider<LzmaDecompressionProvider>();
-options.SkipUnsupportedEncodings = false;
-```
-```cs
-builder
-    .ConfigureServices(sc => sc.AddRequestDecompression(options))
-    .Configure(ab => ab.UseRequestDecompression())
+        options.UseDefaults();
+        options.AddProvider<LzmaDecompressionProvider>();
+        options.SkipUnsupportedEncodings = false;
+
+        services.AddRequestDecompression(options);
+    }
+
+    public void Configure(IApplicationBuilder app)
+    {
+        app.UseRequestDecompression();
+    }
+}
 ```

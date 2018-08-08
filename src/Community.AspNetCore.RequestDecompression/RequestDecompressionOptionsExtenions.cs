@@ -19,9 +19,13 @@ namespace Community.AspNetCore.RequestDecompression
 
             options.AddProvider<DeflateDecompressionProvider>();
             options.AddProvider<GzipDecompressionProvider>();
+
 #if NETCOREAPP2_1
+
             options.AddProvider<BrotliDecompressionProvider>();
+
 #endif
+
             options.SkipUnsupportedEncodings = true;
         }
     }

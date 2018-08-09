@@ -9,7 +9,6 @@ using Community.AspNetCore.RequestDecompression.Resources;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
 namespace Community.AspNetCore.RequestDecompression
@@ -41,7 +40,7 @@ namespace Community.AspNetCore.RequestDecompression
                 {
                     throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, Strings.GetString("encoding.duplicate"), encodingName));
                 }
-                if (StringSegment.Equals(encodingName, "identity", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(encodingName, "identity", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new InvalidOperationException(Strings.GetString("encoding.identity"));
                 }
@@ -91,7 +90,7 @@ namespace Community.AspNetCore.RequestDecompression
 
                     using (decodingStream)
                     {
-                        await decodingStream.CopyToAsync(decodedStream, 81920, context.RequestAborted); // 81920 is the default buffer size
+                        await decodingStream.CopyToAsync(decodedStream, 81920, context.RequestAborted);
                     }
 
                     decodedStream.Position = 0L;

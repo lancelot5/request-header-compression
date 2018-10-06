@@ -18,7 +18,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
     [TestClass]
     public sealed class RequestDecompressionMiddlewareTests
     {
-        private static void TestActionForDecodedContent(HttpRequest request)
+        private static void TestActionWhenZeroEncodingsLeft(HttpRequest request)
         {
             Assert.IsFalse(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
             Assert.IsTrue(request.Headers.ContainsKey(HeaderNames.ContentLength));
@@ -36,16 +36,16 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
             CollectionAssert.AreEqual(CreateContentSample(), content);
         }
 
-        private void TestActionForPartiallyDecodedContent(HttpRequest request)
+        private void TestActionWhenOneEncodingLeft(HttpRequest request)
         {
             Assert.IsTrue(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
-            Assert.AreEqual((StringValues)new[] { "identity", "unknown" }, request.Headers[HeaderNames.ContentEncoding]);
+            Assert.AreEqual(new StringValues("unknown"), request.Headers[HeaderNames.ContentEncoding]);
         }
 
-        private void TestActionForUndecodedContent(HttpRequest request)
+        private void TestActionWhenMoreThanOneEncodingLeft(HttpRequest request)
         {
             Assert.IsTrue(request.Headers.ContainsKey(HeaderNames.ContentEncoding));
-            Assert.AreEqual((StringValues)"unknown", request.Headers[HeaderNames.ContentEncoding]);
+            Assert.AreEqual(new StringValues(new[] { "identity", "unknown" }), request.Headers[HeaderNames.ContentEncoding]);
         }
 
         [TestMethod]
@@ -59,7 +59,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
-                    .AddRequestTest(TestActionForDecodedContent))
+                    .AddRequestTest(TestActionWhenZeroEncodingsLeft))
                 .Configure(ab => ab
                     .UseRequestDecompression()
                     .UseRequestTest());
@@ -89,7 +89,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
-                    .AddRequestTest(TestActionForDecodedContent))
+                    .AddRequestTest(TestActionWhenZeroEncodingsLeft))
                 .Configure(ab => ab
                     .UseRequestDecompression()
                     .UseRequestTest());
@@ -118,7 +118,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
-                    .AddRequestTest(TestActionForDecodedContent))
+                    .AddRequestTest(TestActionWhenZeroEncodingsLeft))
                 .Configure(ab => ab
                     .UseRequestDecompression()
                     .UseRequestTest());
@@ -146,7 +146,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
-                    .AddRequestTest(TestActionForDecodedContent))
+                    .AddRequestTest(TestActionWhenZeroEncodingsLeft))
                 .Configure(ab => ab
                     .UseRequestDecompression()
                     .UseRequestTest());
@@ -174,7 +174,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
-                    .AddRequestTest(TestActionForDecodedContent))
+                    .AddRequestTest(TestActionWhenZeroEncodingsLeft))
                 .Configure(ab => ab
                     .UseRequestDecompression()
                     .UseRequestTest());
@@ -202,7 +202,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
-                    .AddRequestTest(TestActionForDecodedContent))
+                    .AddRequestTest(TestActionWhenZeroEncodingsLeft))
                 .Configure(ab => ab
                     .UseRequestDecompression()
                     .UseRequestTest());
@@ -224,7 +224,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
         }
 
         [TestMethod]
-        public async Task HandleMultipleEncodingsWithUknown()
+        public async Task HandleMultipleEncodingsWhenOneLeft()
         {
             var options = new RequestDecompressionOptions();
 
@@ -233,7 +233,38 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
-                    .AddRequestTest(TestActionForPartiallyDecodedContent))
+                    .AddRequestTest(TestActionWhenOneEncodingLeft))
+                .Configure(ab => ab
+                    .UseRequestDecompression()
+                    .UseRequestTest());
+
+            using (var server = new TestServer(builder))
+            {
+                using (var client = server.CreateClient())
+                {
+                    var requestContent = new ByteArrayContent(CompressWithBrotli(CompressWithGzip(CompressWithDeflate(CreateContentSample()))));
+
+                    requestContent.Headers.ContentEncoding.Add("unknown");
+                    requestContent.Headers.ContentEncoding.Add("deflate");
+                    requestContent.Headers.ContentEncoding.Add("gzip");
+                    requestContent.Headers.ContentEncoding.Add("br");
+
+                    await client.PostAsync(server.BaseAddress, requestContent);
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleMultipleEncodingsWhenMoreThanOneLeft()
+        {
+            var options = new RequestDecompressionOptions();
+
+            options.UseDefaults();
+
+            var builder = new WebHostBuilder()
+                .ConfigureServices(sc => sc
+                    .AddRequestDecompression(options)
+                    .AddRequestTest(TestActionWhenMoreThanOneEncodingLeft))
                 .Configure(ab => ab
                     .UseRequestDecompression()
                     .UseRequestTest());
@@ -263,7 +294,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
-                    .AddRequestTest(TestActionForUndecodedContent))
+                    .AddRequestTest(TestActionWhenOneEncodingLeft))
                 .Configure(ab => ab
                     .UseRequestDecompression()
                     .UseRequestTest());
@@ -292,7 +323,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
             var builder = new WebHostBuilder()
                 .ConfigureServices(sc => sc
                     .AddRequestDecompression(options)
-                    .AddRequestTest(TestActionForUndecodedContent))
+                    .AddRequestTest(TestActionWhenZeroEncodingsLeft))
                 .Configure(ab => ab
                     .UseRequestDecompression()
                     .UseRequestTest());

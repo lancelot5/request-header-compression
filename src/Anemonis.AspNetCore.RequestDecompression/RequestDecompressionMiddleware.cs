@@ -9,6 +9,7 @@ using Anemonis.AspNetCore.RequestDecompression.Resources;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
 namespace Anemonis.AspNetCore.RequestDecompression
@@ -102,7 +103,11 @@ namespace Anemonis.AspNetCore.RequestDecompression
                     context.Request.ContentLength = context.Request.Body.Length;
                     context.Request.Headers.Remove(HeaderNames.ContentEncoding);
                 }
-                else if (encodingsLeft < encodingNames.Count)
+                else if (encodingsLeft == 1)
+                {
+                    context.Request.Headers[HeaderNames.ContentEncoding] = new StringValues(encodingNames[0]);
+                }
+                else
                 {
                     var encodingNamesLeft = new string[encodingsLeft];
 
@@ -111,7 +116,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                         encodingNamesLeft[i] = encodingNames[i];
                     }
 
-                    context.Request.Headers[HeaderNames.ContentEncoding] = encodingNamesLeft;
+                    context.Request.Headers[HeaderNames.ContentEncoding] = new StringValues(encodingNamesLeft);
                 }
             }
 
@@ -120,7 +125,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
             decodedStream?.Dispose();
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             foreach (var provider in _providers.Values)
             {

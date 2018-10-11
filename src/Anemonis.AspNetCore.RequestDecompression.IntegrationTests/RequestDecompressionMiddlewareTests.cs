@@ -74,6 +74,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
                     requestContent.Headers.ContentLength = contentBytes.Length;
 
                     await client.PostAsync(server.BaseAddress, requestContent);
+
+                    requestContent.Dispose();
                 }
             }
         }
@@ -104,6 +106,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
                     requestContent.Headers.ContentEncoding.Add("identity");
 
                     await client.PostAsync(server.BaseAddress, requestContent);
+
+                    requestContent.Dispose();
                 }
             }
         }
@@ -132,6 +136,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
                     requestContent.Headers.ContentEncoding.Add("deflate");
 
                     await client.PostAsync(server.BaseAddress, requestContent);
+
+                    requestContent.Dispose();
                 }
             }
         }
@@ -160,6 +166,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
                     requestContent.Headers.ContentEncoding.Add("gzip");
 
                     await client.PostAsync(server.BaseAddress, requestContent);
+
+                    requestContent.Dispose();
                 }
             }
         }
@@ -188,6 +196,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
                     requestContent.Headers.ContentEncoding.Add("br");
 
                     await client.PostAsync(server.BaseAddress, requestContent);
+
+                    requestContent.Dispose();
                 }
             }
         }
@@ -219,6 +229,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
                     requestContent.Headers.ContentEncoding.Add("br");
 
                     await client.PostAsync(server.BaseAddress, requestContent);
+
+                    requestContent.Dispose();
                 }
             }
         }
@@ -250,6 +262,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
                     requestContent.Headers.ContentEncoding.Add("br");
 
                     await client.PostAsync(server.BaseAddress, requestContent);
+
+                    requestContent.Dispose();
                 }
             }
         }
@@ -282,6 +296,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
                     requestContent.Headers.ContentEncoding.Add("br");
 
                     await client.PostAsync(server.BaseAddress, requestContent);
+
+                    requestContent.Dispose();
                 }
             }
         }
@@ -308,6 +324,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
                     requestContent.Headers.ContentEncoding.Add("unknown");
 
                     await client.PostAsync(server.BaseAddress, requestContent);
+
+                    requestContent.Dispose();
                 }
             }
         }
@@ -337,6 +355,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests
                     requestContent.Headers.ContentEncoding.Add("unknown");
 
                     var response = await client.PostAsync(server.BaseAddress, requestContent);
+
+                    requestContent.Dispose();
 
                     Assert.AreEqual(HttpStatusCode.UnsupportedMediaType, response.StatusCode);
                 }

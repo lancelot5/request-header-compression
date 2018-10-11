@@ -1,10 +1,10 @@
-## Anemonis.AspNetCore.RequestDecompression
+# Anemonis.AspNetCore.RequestDecompression
 
 Transparent HTTP request decompression middleware for ASP.NET Core 2, which serves as a complementary component to the [Microsoft.AspNetCore.ResponseCompression](https://www.nuget.org/packages/Microsoft.AspNetCore.ResponseCompression/) package.
 
 [![NuGet package](https://img.shields.io/nuget/v/Anemonis.AspNetCore.RequestDecompression.svg?style=flat-square)](https://www.nuget.org/packages/Anemonis.AspNetCore.RequestDecompression)
 
-### Important Features
+## Project Details
 
 - The middleware includes decompression providers for the `gzip`, `DEFLATE`, and `Brotli` algorithms.
 - The middleware supports decoding of content with multiple encodings.
@@ -12,13 +12,9 @@ Transparent HTTP request decompression middleware for ASP.NET Core 2, which serv
 - The middleware supports responding with HTTP status code `415` if an unsupported encoding is found.
 - The middleware supports automatic disposing of disposable decoding providers.
 - The middleware supports the `identity` encoding value.
-
-### Characteristics
-
 - The middleware adds the `Content-Length` header if all encodings were handled.
-- The decompression provider for `Brotli` algorithm is available only for .NET Core 2.1 and higher.
 
-### Usage Examples
+## Code Examples
 
 ```cs
 public class LzmaDecompressionProvider : IDecompressionProvider
@@ -53,3 +49,8 @@ public class Startup : IStartup
     }
 }
 ```
+
+## Quicklinks
+
+- [Contributing Guidelines](./CONTRIBUTING.md)
+- [Code of Conduct](./CODE_OF_CONDUCT.md)

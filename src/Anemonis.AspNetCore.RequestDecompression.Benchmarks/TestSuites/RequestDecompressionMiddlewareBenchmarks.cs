@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anemonis.AspNetCore.RequestDecompression.Benchmarks.TestSuites
 {
-    public sealed class RequestDecompressionMiddlewareBenchmarks
+    public class RequestDecompressionMiddlewareBenchmarks
     {
         private static readonly IReadOnlyDictionary<string, byte[]> _resources = CreateResourceDictionary();
 

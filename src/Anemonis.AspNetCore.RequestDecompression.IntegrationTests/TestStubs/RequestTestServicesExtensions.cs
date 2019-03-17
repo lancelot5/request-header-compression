@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests.Middleware
+namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests.TestStubs
 {
     internal static class RequestTestServicesExtensions
     {

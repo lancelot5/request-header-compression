@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 
-namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests.Middleware
+namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests.TestStubs
 {
     internal sealed class RequestTestOptions
     {

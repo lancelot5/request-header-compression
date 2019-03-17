@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests.Middleware
+namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests.TestStubs
 {
     internal sealed class RequestTestMiddleware : IMiddleware
     {

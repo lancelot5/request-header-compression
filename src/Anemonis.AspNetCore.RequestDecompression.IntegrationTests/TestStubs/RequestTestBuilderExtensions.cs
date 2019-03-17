@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 
-namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests.Middleware
+namespace Anemonis.AspNetCore.RequestDecompression.IntegrationTests.TestStubs
 {
     internal static class RequestTestBuilderExtensions
     {

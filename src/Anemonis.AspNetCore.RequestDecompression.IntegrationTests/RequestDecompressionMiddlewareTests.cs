@@ -4,7 +4,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Anemonis.AspNetCore.RequestDecompression.IntegrationTests.Middleware;
+using Anemonis.AspNetCore.RequestDecompression.IntegrationTests.TestStubs;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;

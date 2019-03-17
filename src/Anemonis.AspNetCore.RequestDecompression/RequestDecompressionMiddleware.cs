@@ -14,11 +14,16 @@ using Microsoft.Net.Http.Headers;
 
 namespace Anemonis.AspNetCore.RequestDecompression
 {
-    internal sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
+    /// <summary>Represents a middleware for adding HTTP request decompression to the application's request pipeline.</summary>
+    public sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
     {
         private readonly IReadOnlyDictionary<string, IDecompressionProvider> _providers;
         private readonly bool _skipUnsupportedEncodings;
 
+        /// <summary>Initializes a new instance of the <see cref="RequestDecompressionMiddleware" /> class.</summary>
+        /// <param name="services">The <see cref="IServiceProvider" /> instance for retrieving service objects.</param>
+        /// <param name="options">The <see cref="IOptions{RequestDecompressionOptions}" /> instance for retrieving decompression options.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="services" /> or <paramref name="options" /> is <see langword="null" />.</exception>
         public RequestDecompressionMiddleware(IServiceProvider services, IOptions<RequestDecompressionOptions> options)
         {
             if (services == null)
@@ -55,7 +60,11 @@ namespace Anemonis.AspNetCore.RequestDecompression
             _skipUnsupportedEncodings = options.Value.SkipUnsupportedEncodings;
         }
 
-        async Task IMiddleware.InvokeAsync(HttpContext context, RequestDelegate next)
+        /// <summary>Handles an HTTP request as an asynchronous operation.</summary>
+        /// <param name="context">The <see cref="HttpContext" /> instance for the current request.</param>
+        /// <param name="next">The delegate representing the remaining middleware in the request pipeline.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             var decodedStream = default(Stream);
 
@@ -125,6 +134,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
             decodedStream?.Dispose();
         }
 
+        /// <summary>Disposes the corresponding decompression providers.</summary>
         public void Dispose()
         {
             foreach (var provider in _providers.Values)

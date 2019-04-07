@@ -1,0 +1,26 @@
+﻿using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Anemonis.AspNetCore.RequestDecompression.UnitTests.Providers
+{
+    [TestClass]
+    public sealed class DeflateDecompressionProviderTests
+    {
+        [TestMethod]
+        public void CreateStream()
+        {
+            var provider = new DeflateDecompressionProvider() as IDecompressionProvider;
+            var stream = provider.CreateStream(new MemoryStream());
+
+            Assert.IsNotNull(stream);
+        }
+
+        [TestMethod]
+        public void EncodingName()
+        {
+            var provider = new DeflateDecompressionProvider() as IDecompressionProvider;
+
+            Assert.IsNotNull(provider.EncodingName);
+        }
+    }
+}

@@ -47,7 +47,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         [DataRow("unknown deflate gzip br", "", false, StatusCodes.Status415UnsupportedMediaType)]
         [DataRow("identity unknown deflate gzip br", "identity unknown", true, StatusCodes.Status200OK)]
         [DataRow("identity unknown deflate gzip br", "", false, StatusCodes.Status415UnsupportedMediaType)]
-        public async Task Invoke(string encoding1, string encoding2, bool skipUnsupportedEncodings, int statusCode)
+        public async Task InvokeAsync(string encoding1, string encoding2, bool skipUnsupportedEncodings, int statusCode)
         {
             var options = new RequestDecompressionOptions();
 

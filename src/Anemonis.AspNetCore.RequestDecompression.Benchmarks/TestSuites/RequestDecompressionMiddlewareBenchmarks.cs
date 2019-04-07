@@ -2,117 +2,168 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 
 namespace Anemonis.AspNetCore.RequestDecompression.Benchmarks.TestSuites
 {
     public class RequestDecompressionMiddlewareBenchmarks
     {
-        private static readonly IReadOnlyDictionary<string, byte[]> _resources = CreateResourceDictionary();
+        private static readonly IReadOnlyDictionary<string, (string Encoding, byte[] Content)> _resources = CreateResourceDictionary();
 
-        private readonly TestServer _server;
-        private readonly HttpClient _client;
+        private readonly IMiddleware _middleware = CreateMiddleware();
 
-        private static IReadOnlyDictionary<string, byte[]> CreateResourceDictionary()
-        {
-            var decodedContent = new byte[byte.MaxValue];
-
-            for (var i = 0; i < decodedContent.Length; i++)
-            {
-                decodedContent[i] = (byte)i;
-            }
-
-            var resources = new Dictionary<string, byte[]>(StringComparer.Ordinal)
-            {
-                [""] = decodedContent,
-                ["identity"] = decodedContent,
-                ["unknown"] = decodedContent
-            };
-
-            using (var outputStream = new MemoryStream())
-            {
-                using (var compressionStream = new DeflateStream(outputStream, CompressionLevel.Optimal))
-                {
-                    compressionStream.Write(decodedContent, 0, decodedContent.Length);
-                }
-
-                resources["deflate"] = outputStream.ToArray();
-            }
-            using (var outputStream = new MemoryStream())
-            {
-                using (var compressionStream = new GZipStream(outputStream, CompressionLevel.Optimal))
-                {
-                    compressionStream.Write(decodedContent, 0, decodedContent.Length);
-                }
-
-                resources["gzip"] = outputStream.ToArray();
-            }
-
-            return resources;
-        }
-
-        public RequestDecompressionMiddlewareBenchmarks()
+        private static IMiddleware CreateMiddleware()
         {
             var options = new RequestDecompressionOptions();
 
             options.AddProvider<DeflateDecompressionProvider>();
             options.AddProvider<GzipDecompressionProvider>();
+            options.AddProvider<BrotliDecompressionProvider>();
 
-            var builder = new WebHostBuilder()
-                .ConfigureServices(sc => sc
-                    .AddRequestDecompression(options))
-                .Configure(ab => ab
-                    .UseRequestDecompression());
+            var webHost = new WebHostBuilder()
+                .ConfigureServices(sc => sc.AddRequestDecompression(options))
+                .Configure(ab => ab.UseRequestDecompression())
+                .Build();
 
-            _server = new TestServer(builder);
-            _client = _server.CreateClient();
+            return (IMiddleware)webHost.Services.GetService(typeof(RequestDecompressionMiddleware));
         }
 
-        private static HttpContent CreateHttpContent(string encodingName)
+        private static IReadOnlyDictionary<string, (string, byte[])> CreateResourceDictionary()
         {
-            var result = new ByteArrayContent(_resources[encodingName]);
+            var content = Encoding.UTF8.GetBytes("Hello World!");
 
-            if (!string.IsNullOrEmpty(encodingName))
+            var resources = new Dictionary<string, (string, byte[])>(StringComparer.Ordinal)
             {
-                result.Headers.ContentEncoding.Add(encodingName);
-            }
+                ["ne"] = ("", content),
+                ["id"] = ("identity", content),
+                ["df"] = ("deflate", CompressionEncoder.Encode(content, "deflate")),
+                ["gz"] = ("gzip", CompressionEncoder.Encode(content, "gzip")),
+                ["br"] = ("br", CompressionEncoder.Encode(content, "br")),
+                ["un"] = ("unknown", CompressionEncoder.Encode(content, "unknown"))
+            };
+
+            return resources;
+        }
+
+        private static HttpContext CreateHttpContext(string name)
+        {
+            var (encoding, content) = _resources[name];
+            var result = new DefaultHttpContext();
+
+            result.Request.Method = HttpMethods.Post;
+            result.Request.Headers.Add(HeaderNames.ContentEncoding, encoding);
+            result.Request.Body = new MemoryStream(content, false);
 
             return result;
         }
 
-        [Benchmark(Description = "Content-Encoding=         ", Baseline = true)]
-        public async Task<object> DecompressEmptyEncoding()
+        private static Task FinishInvokeChain(HttpContext context)
         {
-            return await _client.PostAsync(_server.BaseAddress, CreateHttpContent(""));
+            return Task.CompletedTask;
         }
 
-        [Benchmark(Description = "Content-Encoding=identity ")]
-        public async Task<object> DecompressIdentityEncoding()
+        [Benchmark(Description = "ENCODING=NE", Baseline = true)]
+        public async Task DecompressNE()
         {
-            return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("identity"));
+            await _middleware.InvokeAsync(CreateHttpContext("ne"), FinishInvokeChain).ConfigureAwait(false);
         }
 
-        [Benchmark(Description = "Content-Encoding=deflate  ")]
-        public async Task<object> DecompressDeflateEncoding()
+        [Benchmark(Description = "ENCODING=ID")]
+        public async Task DecompressID()
         {
-            return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("deflate"));
+            await _middleware.InvokeAsync(CreateHttpContext("id"), FinishInvokeChain).ConfigureAwait(false);
         }
 
-        [Benchmark(Description = "Content-Encoding=gzip     ")]
-        public async Task<object> DecompressGzipEncoding()
+        [Benchmark(Description = "ENCODING=DF")]
+        public async Task DecompressDF()
         {
-            return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("gzip"));
+            await _middleware.InvokeAsync(CreateHttpContext("df"), FinishInvokeChain).ConfigureAwait(false);
         }
 
-        [Benchmark(Description = "Content-Encoding=unknown"  )]
-        public async Task<object> DecompressUnknownEncoding()
+        [Benchmark(Description = "ENCODING=GZ")]
+        public async Task DecompressGZ()
         {
-            return await _client.PostAsync(_server.BaseAddress, CreateHttpContent("unknown"));
+            await _middleware.InvokeAsync(CreateHttpContext("gz"), FinishInvokeChain).ConfigureAwait(false);
+        }
+
+        [Benchmark(Description = "ENCODING=BR")]
+        public async Task DecompressBR()
+        {
+            await _middleware.InvokeAsync(CreateHttpContext("br"), FinishInvokeChain).ConfigureAwait(false);
+        }
+
+        [Benchmark(Description = "ENCODING=UN")]
+        public async Task DecompressUN()
+        {
+            await _middleware.InvokeAsync(CreateHttpContext("un"), FinishInvokeChain).ConfigureAwait(false);
+        }
+
+        private static class CompressionEncoder
+        {
+            public static byte[] Encode(byte[] content, string algorithm)
+            {
+                switch (algorithm)
+                {
+                    case "identity":
+                        {
+                            return content;
+                        }
+                    case "deflate":
+                        {
+                            using (var contentStream = new MemoryStream())
+                            {
+                                using (var compressionStream = new DeflateStream(contentStream, CompressionLevel.Optimal))
+                                {
+                                    compressionStream.Write(content, 0, content.Length);
+                                }
+
+                                return contentStream.ToArray();
+                            }
+                        }
+                    case "gzip":
+                        {
+                            using (var contentStream = new MemoryStream())
+                            {
+                                using (var compressionStream = new GZipStream(contentStream, CompressionLevel.Optimal))
+                                {
+                                    compressionStream.Write(content, 0, content.Length);
+                                }
+
+                                return contentStream.ToArray();
+                            }
+                        }
+                    case "br":
+                        {
+                            using (var contentStream = new MemoryStream())
+                            {
+                                using (var compressionStream = new BrotliStream(contentStream, CompressionLevel.Optimal))
+                                {
+                                    compressionStream.Write(content, 0, content.Length);
+                                }
+
+                                return contentStream.ToArray();
+                            }
+                        }
+                    default:
+                        {
+                            using (var contentStream = new MemoryStream())
+                            {
+                                for (var i = 0; i < content.Length; i++)
+                                {
+                                    contentStream.WriteByte((byte)(content[i] ^ 0xFF));
+                                }
+
+                                return contentStream.ToArray();
+                            }
+                        }
+                }
+            }
         }
     }
 }

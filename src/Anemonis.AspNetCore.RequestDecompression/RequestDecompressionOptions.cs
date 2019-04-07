@@ -18,18 +18,9 @@ namespace Anemonis.AspNetCore.RequestDecompression
         {
         }
 
-        internal void Apply(RequestDecompressionOptions options)
-        {
-            foreach (var type in options.Providers)
-            {
-                _providers.Add(type);
-            }
-
-            _skipUnsupportedEncodings = options.SkipUnsupportedEncodings;
-        }
-
-        /// <summary>Adds the specified decompression provider.</summary>
+        /// <summary>Adds the specified decompression provider type.</summary>
         /// <param name="type">The type of the decompression provider.</param>
+        /// <exception cref="ArgumentException"><paramref name="type" /> does not implement the <see cref="IDecompressionProvider" /> interface.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" />.</exception>
         public void AddProvider(Type type)
         {
@@ -45,7 +36,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
             _providers.Add(type);
         }
 
-        /// <summary>Adds the specified decompression provider.</summary>
+        /// <summary>Adds the specified decompression provider type.</summary>
         /// <typeparam name="T">The type of the decompression provider.</typeparam>
         public void AddProvider<T>()
             where T : IDecompressionProvider
@@ -53,7 +44,8 @@ namespace Anemonis.AspNetCore.RequestDecompression
             _providers.Add(typeof(T));
         }
 
-        internal IReadOnlyCollection<Type> Providers
+        /// <summary>Gets a collection of registered decompression provider types.</summary>
+        public IReadOnlyCollection<Type> Providers
         {
             get => _providers;
         }

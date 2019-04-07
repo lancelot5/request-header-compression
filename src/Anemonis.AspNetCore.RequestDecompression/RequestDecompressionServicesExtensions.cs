@@ -40,10 +40,20 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 throw new ArgumentNullException(nameof(options));
             }
 
-            services.Configure<RequestDecompressionOptions>(o => o.Apply(options));
+            services.Configure<RequestDecompressionOptions>(o => ApplyOptions(options, o));
             services.AddSingleton<RequestDecompressionMiddleware, RequestDecompressionMiddleware>();
 
             return services;
+        }
+
+        private static void ApplyOptions(RequestDecompressionOptions source, RequestDecompressionOptions target)
+        {
+            foreach (var type in source.Providers)
+            {
+                target.AddProvider(type);
+            }
+
+            target.SkipUnsupportedEncodings = source.SkipUnsupportedEncodings;
         }
     }
 }

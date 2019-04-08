@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +12,7 @@ using Moq;
 namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
 {
     [TestClass]
-    public sealed class RequestDecompressionMiddlewareTests
+    public sealed partial class RequestDecompressionMiddlewareTests
     {
         [TestMethod]
         public void ConstructorWithServicesAndOptionsWhenServicesIsNull()
@@ -97,68 +96,6 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
             }
 
             Assert.AreEqual(statusCode, httpContext.Response.StatusCode);
-        }
-
-        private static class CompressionEncoder
-        {
-            public static byte[] Encode(byte[] content, string algorithm)
-            {
-                switch (algorithm)
-                {
-                    case "identity":
-                        {
-                            return content;
-                        }
-                    case "deflate":
-                        {
-                            using (var contentStream = new MemoryStream())
-                            {
-                                using (var compressionStream = new DeflateStream(contentStream, CompressionLevel.Optimal))
-                                {
-                                    compressionStream.Write(content, 0, content.Length);
-                                }
-
-                                return contentStream.ToArray();
-                            }
-                        }
-                    case "gzip":
-                        {
-                            using (var contentStream = new MemoryStream())
-                            {
-                                using (var compressionStream = new GZipStream(contentStream, CompressionLevel.Optimal))
-                                {
-                                    compressionStream.Write(content, 0, content.Length);
-                                }
-
-                                return contentStream.ToArray();
-                            }
-                        }
-                    case "br":
-                        {
-                            using (var contentStream = new MemoryStream())
-                            {
-                                using (var compressionStream = new BrotliStream(contentStream, CompressionLevel.Optimal))
-                                {
-                                    compressionStream.Write(content, 0, content.Length);
-                                }
-
-                                return contentStream.ToArray();
-                            }
-                        }
-                    default:
-                        {
-                            using (var contentStream = new MemoryStream())
-                            {
-                                for (var i = 0; i < content.Length; i++)
-                                {
-                                    contentStream.WriteByte((byte)(content[i] ^ 0xFF));
-                                }
-
-                                return contentStream.ToArray();
-                            }
-                        }
-                }
-            }
         }
     }
 }

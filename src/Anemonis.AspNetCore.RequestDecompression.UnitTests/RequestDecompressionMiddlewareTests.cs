@@ -3,13 +3,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+
 using Anemonis.AspNetCore.RequestDecompression.UnitTests.TestStubs;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Moq;
 
 namespace Anemonis.AspNetCore.RequestDecompression.UnitTests

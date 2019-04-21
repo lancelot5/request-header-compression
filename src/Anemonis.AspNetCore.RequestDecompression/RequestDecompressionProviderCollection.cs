@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
+
 using Anemonis.AspNetCore.RequestDecompression.Resources;
 
 namespace Anemonis.AspNetCore.RequestDecompression

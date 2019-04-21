@@ -6,7 +6,9 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+
 using Anemonis.AspNetCore.RequestDecompression.Resources;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -49,9 +51,11 @@ namespace Anemonis.AspNetCore.RequestDecompression
             _logger = logger;
 
             var decompressionOptions = options.Value;
-            var decompressionProviders = new Dictionary<string, IDecompressionProvider>(decompressionOptions.Providers.Count, StringComparer.OrdinalIgnoreCase);
 
-            decompressionProviders.Add("identity", _identityDecompressionProvider);
+            var decompressionProviders = new Dictionary<string, IDecompressionProvider>(decompressionOptions.Providers.Count, StringComparer.OrdinalIgnoreCase)
+            {
+                { "identity", _identityDecompressionProvider }
+            };
 
             foreach (var decompressionProviderType in decompressionOptions.Providers)
             {

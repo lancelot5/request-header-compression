@@ -1,7 +1,9 @@
 ﻿// © Alexander Kozlenko. Licensed under the MIT License.
 
 using System;
+
 using Anemonis.AspNetCore.RequestDecompression;
+
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 
+#pragma warning disable IDE0060
+
 namespace Anemonis.AspNetCore.RequestDecompression.UnitTests.TestStubs
 {
     [EncodingName("encoding")]
@@ -12,3 +14,5 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests.TestStubs
         }
     }
 }
+
+#pragma warning restore IDE0060

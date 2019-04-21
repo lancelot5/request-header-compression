@@ -1,6 +1,8 @@
 ﻿using System.Linq;
+
 using Anemonis.AspNetCore.RequestDecompression.Benchmarks.Framework;
 using Anemonis.AspNetCore.RequestDecompression.Benchmarks.TestSuites;
+
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;

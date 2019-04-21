@@ -1,5 +1,7 @@
 ﻿using System;
+
 using Anemonis.AspNetCore.RequestDecompression.UnitTests.TestStubs;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Anemonis.AspNetCore.RequestDecompression.UnitTests

@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,14 +20,13 @@ namespace Anemonis.AspNetCore.RequestDecompression.Benchmarks.TestSuites
 
         private static IMiddleware CreateMiddleware()
         {
-            var options = new RequestDecompressionOptions();
-
-            options.AddProvider<DeflateDecompressionProvider>();
-            options.AddProvider<GzipDecompressionProvider>();
-            options.AddProvider<BrotliDecompressionProvider>();
-
             var webHost = new WebHostBuilder()
-                .ConfigureServices(sc => sc.AddRequestDecompression(options))
+                .ConfigureServices(sc => sc.AddRequestDecompression(co =>
+                    {
+                        co.Providers.Add<DeflateDecompressionProvider>();
+                        co.Providers.Add<GzipDecompressionProvider>();
+                        co.Providers.Add<BrotliDecompressionProvider>();
+                    }))
                 .Configure(ab => ab.UseRequestDecompression())
                 .Build();
 

@@ -117,13 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="encoding.duplicate" xml:space="preserve">
+  <data name="logging.content_encoded" xml:space="preserve">
+    <value>The request has content with encodings applied (count: {0})</value>
+  </data>
+  <data name="logging.content_not_encoded" xml:space="preserve">
+    <value>The request has content without encodings applied</value>
+  </data>
+  <data name="logging.decoding_applied" xml:space="preserve">
+    <value>The request's content will be decoded with the {0} provider</value>
+  </data>
+  <data name="logging.decoding_disabled" xml:space="preserve">
+    <value>The request's content decoding disabled due to the Content-Range header</value>
+  </data>
+  <data name="logging.decoding_skipped" xml:space="preserve">
+    <value>The request's content will not be decoded due to an unknown encoding</value>
+  </data>
+  <data name="middleware.duplicate_encoding_name" xml:space="preserve">
     <value>There are more than one provider registered with the same encoding name: "{0}"</value>
   </data>
-  <data name="encoding.identity" xml:space="preserve">
-    <value>The "identity" encoding name is reserved</value>
-  </data>
-  <data name="provider.invalid_type" xml:space="preserve">
-    <value>The specified type does not implement decompression provider interface</value>
+  <data name="provider_collection.invalid_type" xml:space="preserve">
+    <value>The specified type does not implement {0} interface or does not have {1} attribute applied</value>
   </data>
 </root>

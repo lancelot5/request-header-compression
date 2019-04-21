@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Anemonis.AspNetCore.RequestDecompression.UnitTests.TestStubs;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
@@ -18,18 +21,89 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         public void ConstructorWithServicesAndOptionsWhenServicesIsNull()
         {
             var optionsMock = new Mock<IOptions<RequestDecompressionOptions>>(MockBehavior.Strict);
+            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(() =>
-                new RequestDecompressionMiddleware(null, optionsMock.Object));
+                new RequestDecompressionMiddleware(null, optionsMock.Object, loggerMock.Object));
         }
 
         [TestMethod]
         public void ConstructorWithServicesAndOptionsWhenOptionsIsNull()
         {
             var serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
+            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(() =>
-                new RequestDecompressionMiddleware(serviceProviderMock.Object, null));
+                new RequestDecompressionMiddleware(serviceProviderMock.Object, null, loggerMock.Object));
+        }
+
+        [TestMethod]
+        public void ConstructorWithServicesAndOptionsWhenLoggerIsNull()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
+            var optionsMock = new Mock<IOptions<RequestDecompressionOptions>>(MockBehavior.Strict);
+
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                new RequestDecompressionMiddleware(serviceProviderMock.Object, optionsMock.Object, null));
+        }
+
+        [TestMethod]
+        public void ConstructorWithDuplicateEncodings()
+        {
+            var options = new RequestDecompressionOptions();
+
+            options.Providers.Add<TestDecompressionProvider20>();
+            options.Providers.Add<TestDecompressionProvider21>();
+
+            var serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
+            var optionsMock = new Mock<IOptions<RequestDecompressionOptions>>(MockBehavior.Strict);
+
+            optionsMock
+                .Setup(o => o.Value)
+                .Returns(options);
+
+            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Strict);
+
+            Assert.ThrowsException<InvalidOperationException>(() =>
+                new RequestDecompressionMiddleware(serviceProviderMock.Object, optionsMock.Object, loggerMock.Object));
+        }
+
+        [TestMethod]
+        public async Task InvokeAsyncWhenRequestHasContentRangeHeader()
+        {
+            var options = new RequestDecompressionOptions();
+
+            options.Providers.Add<TestDecompressionProvider10>();
+
+            var serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
+            var optionsMock = new Mock<IOptions<RequestDecompressionOptions>>(MockBehavior.Strict);
+
+            optionsMock
+                .Setup(o => o.Value)
+                .Returns(options);
+
+            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Strict);
+
+            loggerMock
+                .Setup(o => o.IsEnabled(It.IsAny<LogLevel>()))
+                .Returns(true);
+            loggerMock
+                .Setup(o => o.Log(It.IsAny<LogLevel>(), It.IsAny<EventId>(), It.IsAny<object>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()))
+                .Callback<LogLevel, EventId, object, Exception, Func<object, Exception, string>>((ll, ei, st, ex, fr) => Trace.WriteLine($"Level: '{ll}', Id: ({ei.Id}, '{ei.Name}'), State: '{st}'"));
+
+            var middleware = new RequestDecompressionMiddleware(serviceProviderMock.Object, optionsMock.Object, loggerMock.Object);
+            var content = "Hello World!";
+            var contentBytes = Encoding.UTF8.GetBytes(content);
+            var httpContext = new DefaultHttpContext();
+
+            httpContext.Request.Method = HttpMethods.Post;
+            httpContext.Request.Headers.Add(HeaderNames.ContentEncoding, "encoding");
+            httpContext.Request.Headers.Add(HeaderNames.ContentRange, "0-*/*");
+            httpContext.Request.Body = new MemoryStream(contentBytes);
+
+            await middleware.InvokeAsync(httpContext, c => Task.CompletedTask);
+
+            Assert.AreEqual(0, httpContext.Response.Body.Length);
         }
 
         [DataTestMethod]
@@ -50,18 +124,28 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         {
             var options = new RequestDecompressionOptions();
 
-            options.AddProvider<DeflateDecompressionProvider>();
-            options.AddProvider<GzipDecompressionProvider>();
-            options.AddProvider<BrotliDecompressionProvider>();
+            options.Providers.Add<DeflateDecompressionProvider>();
+            options.Providers.Add<GzipDecompressionProvider>();
+            options.Providers.Add<BrotliDecompressionProvider>();
             options.SkipUnsupportedEncodings = skipUnsupportedEncodings;
+
+            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Strict);
+
+            loggerMock
+                .Setup(o => o.IsEnabled(It.IsAny<LogLevel>()))
+                .Returns(true);
+            loggerMock
+                .Setup(o => o.Log(It.IsAny<LogLevel>(), It.IsAny<EventId>(), It.IsAny<object>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()))
+                .Callback<LogLevel, EventId, object, Exception, Func<object, Exception, string>>((ll, ei, st, ex, fr) => Trace.WriteLine($"Level: '{ll}', Id: ({ei.Id}, '{ei.Name}'), State: '{st}'"));
 
             var serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
             var optionsMock = new Mock<IOptions<RequestDecompressionOptions>>(MockBehavior.Strict);
 
-            optionsMock.Setup(o => o.Value)
+            optionsMock
+                .Setup(o => o.Value)
                 .Returns(options);
 
-            var middleware = new RequestDecompressionMiddleware(serviceProviderMock.Object, optionsMock.Object);
+            var middleware = new RequestDecompressionMiddleware(serviceProviderMock.Object, optionsMock.Object, loggerMock.Object);
             var content = "Hello World!";
 
             var contentBytes1 = Encoding.UTF8.GetBytes(content);

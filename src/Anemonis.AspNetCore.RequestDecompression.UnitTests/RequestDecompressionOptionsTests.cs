@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Anemonis.AspNetCore.RequestDecompression.UnitTests.TestStubs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -13,7 +12,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         {
             var options = new RequestDecompressionOptions();
 
-            Assert.IsTrue(options.SkipUnsupportedEncodings);
+            Assert.IsFalse(options.SkipUnsupportedEncodings);
             Assert.IsNotNull(options.Providers);
             Assert.AreEqual(0, options.Providers.Count);
         }
@@ -23,11 +22,11 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         {
             var options = new RequestDecompressionOptions();
 
-            options.AddProvider<TestDecompressionProvider1>();
+            options.Providers.Add<TestDecompressionProvider10>();
 
             Assert.IsNotNull(options.Providers);
             Assert.AreEqual(1, options.Providers.Count);
-            Assert.IsTrue(options.Providers.Contains(typeof(TestDecompressionProvider1)));
+            Assert.IsTrue(options.Providers.Contains(typeof(TestDecompressionProvider10)));
         }
 
         [TestMethod]
@@ -35,12 +34,12 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         {
             var options = new RequestDecompressionOptions();
 
-            options.AddProvider<TestDecompressionProvider1>();
-            options.AddProvider<TestDecompressionProvider1>();
+            options.Providers.Add<TestDecompressionProvider10>();
+            options.Providers.Add<TestDecompressionProvider10>();
 
             Assert.IsNotNull(options.Providers);
             Assert.AreEqual(1, options.Providers.Count);
-            Assert.IsTrue(options.Providers.Contains(typeof(TestDecompressionProvider1)));
+            Assert.IsTrue(options.Providers.Contains(typeof(TestDecompressionProvider10)));
         }
 
         [TestMethod]
@@ -49,7 +48,16 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
             var options = new RequestDecompressionOptions();
 
             Assert.ThrowsException<ArgumentNullException>(() =>
-                options.AddProvider(null));
+                options.Providers.Add(null));
+        }
+
+        [TestMethod]
+        public void AddProviderWithTypeWhenTypeDoesNotHaveAttribute()
+        {
+            var options = new RequestDecompressionOptions();
+
+            Assert.ThrowsException<ArgumentException>(() =>
+                options.Providers.Add(typeof(TestDecompressionProvider00)));
         }
 
         [TestMethod]
@@ -58,7 +66,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
             var options = new RequestDecompressionOptions();
 
             Assert.ThrowsException<ArgumentException>(() =>
-                options.AddProvider(typeof(TestDecompressionProvider2)));
+                options.Providers.Add(typeof(TestDecompressionProvider01)));
         }
 
         [TestMethod]
@@ -66,11 +74,11 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         {
             var options = new RequestDecompressionOptions();
 
-            options.AddProvider(typeof(TestDecompressionProvider1));
+            options.Providers.Add(typeof(TestDecompressionProvider10));
 
             Assert.IsNotNull(options.Providers);
             Assert.AreEqual(1, options.Providers.Count);
-            Assert.IsTrue(options.Providers.Contains(typeof(TestDecompressionProvider1)));
+            Assert.IsTrue(options.Providers.Contains(typeof(TestDecompressionProvider10)));
         }
 
         [TestMethod]
@@ -78,12 +86,12 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         {
             var options = new RequestDecompressionOptions();
 
-            options.AddProvider(typeof(TestDecompressionProvider1));
-            options.AddProvider(typeof(TestDecompressionProvider1));
+            options.Providers.Add(typeof(TestDecompressionProvider10));
+            options.Providers.Add(typeof(TestDecompressionProvider10));
 
             Assert.IsNotNull(options.Providers);
             Assert.AreEqual(1, options.Providers.Count);
-            Assert.IsTrue(options.Providers.Contains(typeof(TestDecompressionProvider1)));
+            Assert.IsTrue(options.Providers.Contains(typeof(TestDecompressionProvider10)));
         }
     }
 }

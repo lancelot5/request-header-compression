@@ -20,7 +20,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         public void AddRequestDecompressionWithServicesAndOptionsWhenServicesIsNull()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
-                RequestDecompressionServicesExtensions.AddRequestDecompression(null, new RequestDecompressionOptions()));
+                RequestDecompressionServicesExtensions.AddRequestDecompression(null, co => { }));
         }
 
         [TestMethod]
@@ -41,7 +41,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
                 .Returns(new List<ServiceDescriptor>().GetEnumerator());
             servicesMock.Setup(o => o.Add(It.IsNotNull<ServiceDescriptor>()));
 
-            RequestDecompressionServicesExtensions.AddRequestDecompression(servicesMock.Object, new RequestDecompressionOptions());
+            RequestDecompressionServicesExtensions.AddRequestDecompression(servicesMock.Object, co => { });
         }
     }
 }

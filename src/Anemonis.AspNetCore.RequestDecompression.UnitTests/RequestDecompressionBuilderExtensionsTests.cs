@@ -22,11 +22,14 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         {
             var builderMock = new Mock<IApplicationBuilder>(MockBehavior.Strict);
 
-            builderMock.Setup(o => o.New())
+            builderMock
+                .Setup(o => o.New())
                 .Returns(builderMock.Object);
-            builderMock.Setup(o => o.Use(It.IsNotNull<Func<RequestDelegate, RequestDelegate>>()))
+            builderMock
+                .Setup(o => o.Use(It.IsNotNull<Func<RequestDelegate, RequestDelegate>>()))
                 .Returns(builderMock.Object);
-            builderMock.Setup(o => o.Build())
+            builderMock
+                .Setup(o => o.Build())
                 .Returns(c => Task.CompletedTask);
 
             RequestDecompressionBuilderExtensions.UseRequestDecompression(builderMock.Object);

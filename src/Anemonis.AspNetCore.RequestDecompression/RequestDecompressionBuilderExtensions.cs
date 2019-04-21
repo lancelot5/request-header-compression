@@ -1,9 +1,9 @@
 ﻿// © Alexander Kozlenko. Licensed under the MIT License.
 
 using System;
-using Microsoft.AspNetCore.Builder;
+using Anemonis.AspNetCore.RequestDecompression;
 
-namespace Anemonis.AspNetCore.RequestDecompression
+namespace Microsoft.AspNetCore.Builder
 {
     /// <summary>The HTTP request decompression middleware extensions for the <see cref="IApplicationBuilder" />.</summary>
     public static class RequestDecompressionBuilderExtensions

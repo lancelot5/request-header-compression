@@ -1,9 +1,10 @@
 ﻿// © Alexander Kozlenko. Licensed under the MIT License.
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
+using Anemonis.AspNetCore.RequestDecompression;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Anemonis.AspNetCore.RequestDecompression
+namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>The HTTP request decompression middleware extensions for the <see cref="IServiceCollection" />.</summary>
     public static class RequestDecompressionServicesExtensions
@@ -19,41 +20,31 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddSingleton<RequestDecompressionMiddleware, RequestDecompressionMiddleware>();
+            services.TryAddSingleton<RequestDecompressionMiddleware, RequestDecompressionMiddleware>();
 
             return services;
         }
 
         /// <summary>Adds the HTTP request decompression middleware services to the current <see cref="IServiceCollection" /> instance.</summary>
         /// <param name="services">The <see cref="IServiceCollection" /> instance to add the services to.</param>
-        /// <param name="options">The middleware options to add to the current <see cref="IServiceCollection" /> instance.</param>
+        /// <param name="configureOptions">The delegate to configure a <see cref="RequestDecompressionOptions" />.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="services" /> or <paramref name="options" /> is <see langword="null" />.</exception>
-        public static IServiceCollection AddRequestDecompression(this IServiceCollection services, RequestDecompressionOptions options)
+        /// <exception cref="ArgumentNullException"><paramref name="services" /> or <paramref name="configureOptions" /> is <see langword="null" />.</exception>
+        public static IServiceCollection AddRequestDecompression(this IServiceCollection services, Action<RequestDecompressionOptions> configureOptions)
         {
             if (services == null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
-            if (options == null)
+            if (configureOptions == null)
             {
-                throw new ArgumentNullException(nameof(options));
+                throw new ArgumentNullException(nameof(configureOptions));
             }
 
-            services.Configure<RequestDecompressionOptions>(o => ApplyOptions(options, o));
-            services.AddSingleton<RequestDecompressionMiddleware, RequestDecompressionMiddleware>();
+            services.Configure(configureOptions);
+            services.TryAddSingleton<RequestDecompressionMiddleware, RequestDecompressionMiddleware>();
 
             return services;
-        }
-
-        private static void ApplyOptions(RequestDecompressionOptions source, RequestDecompressionOptions target)
-        {
-            foreach (var type in source.Providers)
-            {
-                target.AddProvider(type);
-            }
-
-            target.SkipUnsupportedEncodings = source.SkipUnsupportedEncodings;
         }
     }
 }

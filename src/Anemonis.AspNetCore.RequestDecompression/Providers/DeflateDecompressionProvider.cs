@@ -5,7 +5,8 @@ using System.IO.Compression;
 
 namespace Anemonis.AspNetCore.RequestDecompression
 {
-    /// <summary>Represents DEFLATE decompression provider.</summary>
+    /// <summary>Represents "DEFLATE" decompression provider.</summary>
+    [EncodingName("deflate")]
     public sealed class DeflateDecompressionProvider : IDecompressionProvider
     {
         /// <summary>Initializes a new instance of the <see cref="DeflateDecompressionProvider" /> class.</summary>
@@ -16,11 +17,6 @@ namespace Anemonis.AspNetCore.RequestDecompression
         Stream IDecompressionProvider.CreateStream(Stream outputStream)
         {
             return new DeflateStream(outputStream, CompressionMode.Decompress);
-        }
-
-        string IDecompressionProvider.EncodingName
-        {
-            get => "deflate";
         }
     }
 }

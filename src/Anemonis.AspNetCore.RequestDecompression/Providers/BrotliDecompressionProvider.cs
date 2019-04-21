@@ -7,7 +7,8 @@ using System.IO.Compression;
 
 namespace Anemonis.AspNetCore.RequestDecompression
 {
-    /// <summary>Represents Brotli decompression provider.</summary>
+    /// <summary>Represents "Brotli" decompression provider.</summary>
+    [EncodingName("br")]
     public sealed class BrotliDecompressionProvider : IDecompressionProvider
     {
         /// <summary>Initializes a new instance of the <see cref="BrotliDecompressionProvider" /> class.</summary>
@@ -18,11 +19,6 @@ namespace Anemonis.AspNetCore.RequestDecompression
         Stream IDecompressionProvider.CreateStream(Stream outputStream)
         {
             return new BrotliStream(outputStream, CompressionMode.Decompress);
-        }
-
-        string IDecompressionProvider.EncodingName
-        {
-            get => "br";
         }
     }
 }

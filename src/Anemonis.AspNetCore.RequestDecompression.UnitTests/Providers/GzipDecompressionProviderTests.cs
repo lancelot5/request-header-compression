@@ -14,13 +14,5 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests.Providers
 
             Assert.IsNotNull(stream);
         }
-
-        [TestMethod]
-        public void EncodingName()
-        {
-            var provider = new GzipDecompressionProvider() as IDecompressionProvider;
-
-            Assert.IsNotNull(provider.EncodingName);
-        }
     }
 }

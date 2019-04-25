@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Reflection;
 
 using Anemonis.AspNetCore.RequestDecompression.Resources;
@@ -26,7 +27,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
         {
             if (!typeof(IDecompressionProvider).IsAssignableFrom(value) || (value.GetCustomAttribute<EncodingNameAttribute>() == null))
             {
-                throw new ArgumentException(string.Format(Strings.GetString("provider_collection.invalid_type"), typeof(IDecompressionProvider), typeof(EncodingNameAttribute)), nameof(value));
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.GetString("provider_collection.invalid_type"), typeof(IDecompressionProvider), typeof(EncodingNameAttribute)), nameof(value));
             }
         }
 

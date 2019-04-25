@@ -16,6 +16,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
+#pragma warning disable CA2007
+
 namespace Anemonis.AspNetCore.RequestDecompression
 {
     /// <summary>Represents a middleware for adding HTTP request decompression to the application's request pipeline.</summary>
@@ -181,3 +183,5 @@ namespace Anemonis.AspNetCore.RequestDecompression
         }
     }
 }
+
+#pragma warning restore CA2007

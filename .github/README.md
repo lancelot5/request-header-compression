@@ -4,6 +4,7 @@ Transparent HTTP request decompression middleware for ASP.NET Core 2 based on th
 
 [![NuGet](https://img.shields.io/nuget/vpre/Anemonis.AspNetCore.RequestDecompression.svg?style=flat-square)](https://www.nuget.org/packages/Anemonis.AspNetCore.RequestDecompression)
 [![MyGet](https://img.shields.io/myget/alexanderkozlenko/vpre/Anemonis.AspNetCore.RequestDecompression.svg?label=myget&style=flat-square)](https://www.myget.org/feed/alexanderkozlenko/package/nuget/Anemonis.AspNetCore.RequestDecompression)
+[![LGTM](https://img.shields.io/lgtm/alerts/github/alexanderkozlenko/aspnetcore-request-decompression.svg?style=flat-square)](https://lgtm.com/projects/g/alexanderkozlenko/aspnetcore-request-decompression)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/anemonis/aspnetcore-request-decompression)
 
 ## Project Details

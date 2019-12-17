@@ -30,7 +30,7 @@ According to the current logging configuration, the following events may appear 
 ## Code Examples
 
 ```cs
-public class Startup : IStartup
+public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {

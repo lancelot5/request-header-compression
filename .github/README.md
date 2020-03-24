@@ -40,11 +40,26 @@ public class Startup
                 o.Providers.Add<GzipDecompressionProvider>();
                 o.Providers.Add<BrotliDecompressionProvider>();
             });
+
+        services.AddControllers();
     }
 
     public void Configure(IApplicationBuilder app)
     {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseAuthorization();
         app.UseRequestDecompression();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
     }
 }
 ```
@@ -63,11 +78,25 @@ public class Startup : IStartup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddRequestDecompression(o => o.Providers.Add<LzmaDecompressionProvider>());
+        services.AddControllers();
     }
 
     public void Configure(IApplicationBuilder app)
     {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseAuthorization();
         app.UseRequestDecompression();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
     }
 }
 ```

@@ -95,14 +95,10 @@ namespace Anemonis.AspNetCore.RequestDecompression
 
             if (!context.Request.Headers.TryGetValue(HeaderNames.ContentEncoding, out var encodingNames) && (encodingNames.Count > 0))
             {
-                _logger.LogRequestContentIsNotEncoded();
-
                 await next?.Invoke(context);
 
                 return;
             }
-
-            _logger.LogRequestContentIsEncoded(encodingNames.Count);
 
             if (context.Request.Headers.ContainsKey(HeaderNames.ContentRange))
             {

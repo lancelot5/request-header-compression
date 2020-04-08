@@ -21,8 +21,6 @@ According to the current logging configuration, the following events may appear 
 
 | ID | Level | Reason |
 | :---: | :---: | --- |
-| `1000` | `Trace` | The request has content without encodings applied |
-| `1001` | `Trace` | The request has content with encodings applied |
 | `1100` | `Debug` | The request's content will be decoded with the corresponding provider |
 | `1101` | `Debug` | The request's content will not be decoded due to an unknown encoding |
 | `1300` | `Warning` | The request's content decoding disabled due to the `Content-Range` header |

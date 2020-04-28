@@ -23,7 +23,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
         {
         }
 
-        private void ValidateProviderType(Type value)
+        private static void ValidateProviderType(Type value)
         {
             if (!typeof(IDecompressionProvider).IsAssignableFrom(value) || (value.GetCustomAttribute<EncodingNameAttribute>() == null))
             {

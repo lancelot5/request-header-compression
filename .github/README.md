@@ -10,11 +10,18 @@ Transparent HTTP request decompression middleware for ASP.NET Core 3 based on th
 
 ## Project Details
 
-- The middleware includes decompression providers for the `gzip`, `DEFLATE`, and `Brotli` algorithms.
+Encodings supported:
+
+| `Content-Encoding` | Suported | Description |
+| --- | :---: | --- |
+| `br` | Yes | [Brotli compressed data format](https://tools.ietf.org/html/rfc7932) |
+| `deflate` | Yes | [DEFLATE compressed data format](https://tools.ietf.org/html/rfc1951) |
+| `gzip` | Yes | [Gzip file format](https://tools.ietf.org/html/rfc1952) |
+| `identity` | Yes | "No encoding" identifier: The request must not be decoded. |
+
 - The middleware supports decoding of content with multiple encodings.
 - The middleware provides an ability to use a custom provider for the particular encoding.
 - The middleware supports automatic response with HTTP status code `415` in case of unsupported encoding.
-- The middleware supports the `identity` encoding value.
 - The middleware adds the `Content-Length` header if all encodings were handled.
 
 According to the current logging configuration, the following events may appear in a journal:

@@ -24,7 +24,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
     public sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
     {
         private static readonly Dictionary<string, IDecompressionProvider> _defaultProviders = new Dictionary<string, IDecompressionProvider>(StringComparer.OrdinalIgnoreCase);
-         
+
         private readonly Dictionary<string, IDecompressionProvider> _providers = new Dictionary<string, IDecompressionProvider>(_defaultProviders, StringComparer.OrdinalIgnoreCase);
         private readonly bool _skipUnsupportedEncodings;
         private readonly ILogger _logger;
@@ -93,7 +93,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (!context.Request.Headers.TryGetValue(HeaderNames.ContentEncoding, out var encodingNames) && (encodingNames.Count > 0))
+            if (!context.Request.Headers.ContainsKey(HeaderNames.ContentEncoding))
             {
                 await next?.Invoke(context);
 
@@ -109,10 +109,21 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 return;
             }
 
-            var encodingsLeft = encodingNames.Count;
+            // There could be a single StringValues entry with comma delimited contents
+            //  Content-Encoding: gzip, br, "someEncoding"
+            //  string[] { "gzip", "br", "someEncoding"}
+            var encodingNames = context.Request.Headers.GetCommaSeparatedValues(HeaderNames.ContentEncoding);
+            if (encodingNames.Length == 0)
+            {
+                await next?.Invoke(context);
+
+                return;
+            }
+
+            var encodingsLeft = encodingNames.Length;
             var decodingStream = context.Request.Body;
 
-            for (var i = encodingNames.Count - 1; i >= 0; i--)
+            for (var i = encodingNames.Length - 1; i >= 0; i--)
             {
                 if (!_providers.TryGetValue(encodingNames[i], out var provider))
                 {
@@ -149,7 +160,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 context.Request.Body = decodedStream;
             }
 
-            if (encodingsLeft != encodingNames.Count)
+            if (encodingsLeft != encodingNames.Length)
             {
                 if (encodingsLeft == 0)
                 {

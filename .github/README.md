@@ -6,7 +6,7 @@ Transparent HTTP request decompression middleware for ASP.NET Core 3 based on th
 |---|---|---|
 | Artifacts | [![](https://img.shields.io/nuget/vpre/Anemonis.AspNetCore.RequestDecompression.svg?style=flat-square)](https://www.nuget.org/packages/Anemonis.AspNetCore.RequestDecompression) | [![](https://img.shields.io/myget/alexanderkozlenko/vpre/Anemonis.AspNetCore.RequestDecompression.svg?label=myget&style=flat-square)](https://www.myget.org/feed/alexanderkozlenko/package/nuget/Anemonis.AspNetCore.RequestDecompression) |
 | Code Health | | [![](https://img.shields.io/sonar/coverage/aspnetcore-request-decompression?format=long&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/component_measures?id=aspnetcore-request-decompression&metric=coverage&view=list) [![](https://img.shields.io/sonar/violations/aspnetcore-request-decompression?format=long&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/issues?id=aspnetcore-request-decompression&resolved=false) |
-| Build Status | | [![](https://img.shields.io/azure-devops/build/alexanderkozlenko/github-pipelines/5?label=master&style=flat-square)](https://dev.azure.com/alexanderkozlenko/github-pipelines/_build?definitionId=5&_a=summary) |
+| Build Status | | [![](https://img.shields.io/azure-devops/build/alexanderkozlenko/github-pipelines/5?label=main&style=flat-square)](https://dev.azure.com/alexanderkozlenko/github-pipelines/_build?definitionId=5&_a=summary) |
 
 ## Project Details
 
